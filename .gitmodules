@@ -1,0 +1,3 @@
+[submodule "tests/minitest"]
+	path = tests/minitest
+	url = http://github.com/botanicus/minitest.js.git

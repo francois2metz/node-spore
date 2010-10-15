@@ -33,6 +33,11 @@ If a required parameter is not defined, callback is immediatly called with err !
 
 TODO
 
+## Tests ##
+
+$> git submodule update --init
+$> make test
+
 ## Examples ##
 
 NONE
