@@ -10,11 +10,11 @@ var Client = require('spore').Client;
 
 You can contruct client with json:
 
-new Client({
-        "api_base_url" : "http://api.twitter.com/1",
-        "version" : "0.1",
-        "methods" : {
-        ....
+        new Client({
+                        "api_base_url" : "http://api.twitter.com/1",
+                        "version" : "0.1",
+                        "methods" : {
+                        ....
         }});
 
 Or with a file:
@@ -22,7 +22,7 @@ new Client('twitter.json');
 
 ### Usage ###
 
-client.method_name(params, callback)
+`client.method_name(params, callback)`
 
 * params: hash with key/value
 * callback: function with 2 arguments, err and result
@@ -35,8 +35,8 @@ TODO
 
 ## Tests ##
 
-$> git submodule update --init
-$> make test
+        $> git submodule update --init
+        $> make test
 
 ## Examples ##
 
@@ -44,8 +44,8 @@ NONE
 
 ## TODO ##
 
-* Code, code, code
 * test, test, test
+* Code, code, code
 * Finish Client implementation
 * Write example with a twitter client (or statusnet :))
 * API implementation
