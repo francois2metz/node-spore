@@ -2,14 +2,13 @@
 
 node-spore is an implementation of spore in nodejs.
 
-**Work in progress**: not working
+**Work in progress**: currently not working
 
 ## Client ##
 
-var Client = require('spore').Client;
-
 You can contruct client with json:
 
+        var Client = require('spore').Client;
         new Client({
                         "api_base_url" : "http://api.twitter.com/1",
                         "version" : "0.1",
@@ -18,7 +17,9 @@ You can contruct client with json:
         }});
 
 Or with a file:
-new Client('twitter.json');
+
+        var Client = require('spore').Client;
+        new Client(__dirname +'twitter.json');
 
 ### Usage ###
 
@@ -52,7 +53,7 @@ NONE
 
 ## Links ##
 
-* [Spore specification](http://github.com/SPORE/specifications.git)
+* [Spore specification](http://github.com/SPORE/specifications)
 
 ## License ##
 
