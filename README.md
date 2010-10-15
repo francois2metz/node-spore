@@ -19,7 +19,7 @@ You can contruct client with json:
 Or with a file:
 
         var Client = require('spore').Client;
-        new Client(__dirname +'twitter.json');
+        new Client(__dirname +'/twitter.json');
 
 ### Usage ###
 
