@@ -52,18 +52,43 @@ minitest.context('Create client with json object', function() {
 
     this.assertion("err if a required parameter is missing", function(test) {
         this.client.public_timeline({}, function(err, result) {
-            assert.equal(null, result, 'result should be null');
+            assert.equal(result, null, 'result should be null');
             assert.equal(err, 'format param is required');
             test.finished();
         });
     });
 
     this.assertion("err if unknow param ", function(test) {
-        this.client.public_timeline({format: 'json',
-                                     unknowparam: 'foo'}, function(err, result) {
-                                           assert.equal(result, result, 'result should be null');
-                                           assert.equal(err, 'unknowparam param is unknow'); // very funny
-                                         test.finished();
-                                       });
+        this.client.public_timeline({format: 'json', unknowparam: 'foo'}, function(err, result) {
+            assert.equal(result, null, 'result should be null');
+            assert.equal(err, 'unknowparam param is unknow'); // very funny
+            test.finished();
+        });
+    });
+
+    this.assertion("call remote server", function(test) {
+        this.client.httpClient = {
+            createClient: function(port, host) {
+                assert.equal(port, 80);
+                assert.equal(host, 'api.twitter.com');
+                return {
+                    request: function(method, path, headers) {
+                        assert.equal(method, 'GET');
+                        assert.equal(path, '/statuses/public_timeline.json');
+                        assert.equal(headers.host, 'api.twitter.com');
+                        return {
+                            end: function() {
+                                test.finished();
+                            }
+                        };
+                    }
+                };
+            }
+        };
+        this.client.public_timeline({format: 'json'}, function(err, result) {
+            assert.equal(result, null, 'result should be null');
+            assert.equal(err, 'unknowparam param is unknow'); // very funny
+            test.finished();
+        });
     });
 });
