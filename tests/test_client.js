@@ -25,10 +25,20 @@ var twitterClient = new Client({
     });
 
 assert.ok(twitterClient.public_timeline, "twitterClient have a public_timeline method");
-
-twitterClient.public_timeline('', function(err, result) {
-    
+// required param missing
+var called = 0;
+twitterClient.public_timeline({}, function(err, result) {
+    called++;
+    assert.equal(null, result);
+    assert.equal(err, 'format param is required');
 });
-
-
-
+assert.equal(called, 1, "callback should be called");
+// unknow params
+called = 0;
+twitterClient.public_timeline({format: 'json',
+                               unknowparam: 'foo'}, function(err, result) {
+    called++;
+    assert.equal(null, result);
+    assert.equal(err, 'unknowparam param is unknow'); // very funny
+});
+assert.equal(called, 1, "callback should be called");
