@@ -30,9 +30,11 @@ Or with a file:
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
 
-## API ##
+## Server ##
 
 TODO
+
+* [Backbone](http://github.com/documentcloud/backbone/) + Spore ?
 
 ## Tests ##
 
