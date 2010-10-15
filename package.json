@@ -1,0 +1,11 @@
+{ "version": "0.0.1"
+, "description": ""
+, "repository": { "type": "git"
+, "url": "http://github.com/francois2metz/node-spore.git"
+}
+, "main": "./lib/spore"
+}
+, "author": "François de Metz <francois@2metz.fr>"
+, "licenses": [{ "type": "BSD"}]
+, "name": "spore"
+}
