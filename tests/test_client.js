@@ -79,8 +79,17 @@ minitest.context('Create client with json object', function() {
                         assert.equal(path, '/statuses/public_timeline.json');
                         assert.equal(headers.host, 'api.twitter.com');
                         return {
+                            _events: {},
+                            on: function(name, callback) {
+                                this._events[name] = callback;
+                            },
                             end: function() {
-                                test.finished();
+                                var that = this;
+                                setTimeout(function() {
+                                    that._events.data('[{"place":null,');
+                                    that._events.data('"text": "node-spore is awesome"}, {}]');
+                                    that._events.end();
+                                }, 1000);
                             }
                         };
                     }
@@ -88,18 +97,20 @@ minitest.context('Create client with json object', function() {
             }
         };
         this.client.public_timeline({format: 'json'}, function(err, result) {
-
+            assert.equal(err, null, "err should be null");
+            assert.equal('[{"place":null,"text": "node-spore is awesome"}, {}]' , result);
+            test.finished();
         });
     });
 
     this.assertion("call with other parameter ", function(test) {
         this.client.httpClient = {
             createClient: function(port, host) {
-
                 return {
                     request: function(method, path, headers) {
                         assert.equal(path, '/statuses/public_timeline.html?trim_user=1&include_entities=1');
                         return {
+                            on: function() {},
                             end: function() {
                                 test.finished();
                             }
@@ -108,7 +119,6 @@ minitest.context('Create client with json object', function() {
                 };
             }
         };
-        this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {
-        });
+        this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {});
     });
 });
