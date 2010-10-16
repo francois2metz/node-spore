@@ -86,9 +86,27 @@ minitest.context('Create client with json object', function() {
             }
         };
         this.client.public_timeline({format: 'json'}, function(err, result) {
-            assert.equal(result, null, 'result should be null');
-            assert.equal(err, 'unknowparam param is unknow'); // very funny
-            test.finished();
+
+        });
+    });
+
+    this.assertion("call with other parameter ", function(test) {
+        this.client.httpClient = {
+            createClient: function(port, host) {
+
+                return {
+                    request: function(method, path, headers) {
+                        assert.equal(path, '/statuses/public_timeline.html?trim_user=1&include_entities=1');
+                        return {
+                            end: function() {
+                                test.finished();
+                            }
+                        };
+                    }
+                };
+            }
+        };
+        this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {
         });
     });
 });
