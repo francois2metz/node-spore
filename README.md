@@ -45,6 +45,10 @@ TODO
 
 NONE
 
+## Compatibility ##
+
+Tested with node 0.2.3.
+
 ## TODO ##
 
 * test, test, test
