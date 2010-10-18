@@ -61,7 +61,7 @@ NONE
 * required_params : OK
 * expected_status : NOK
 * authentication : NOK
-* base_url : NOK
+* base_url : OK
 * formats : NOK
 
 ## Compatibility ##

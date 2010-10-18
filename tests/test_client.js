@@ -39,6 +39,18 @@ minitest.context('Create client with json object', function() {
                     "path" : "/statuses/public_timeline.:format",
                     "method" : "GET"
                 },
+                "public_timeline2" : {
+                    "optional_params" : [
+                        "trim_user",
+                        "include_entities"
+                    ],
+                    "required_params" : [
+                        "format"
+                    ],
+                    "base_url" : "http://api2.twitter.com/2",
+                    "path" : "/statuses/public_timeline.:format",
+                    "method" : "GET"
+                },
             }
         });
     });
@@ -74,7 +86,7 @@ minitest.context('Create client with json object', function() {
                 return {
                     request: function(method, path, headers) {
                         assert.equal(method, 'GET');
-                        assert.equal(path, '/statuses/public_timeline.json');
+                        assert.equal(path, '/1/statuses/public_timeline.json');
                         assert.equal(headers.host, 'api.twitter.com');
                         return {
                             _events: {},
@@ -118,7 +130,7 @@ minitest.context('Create client with json object', function() {
             createClient: function(port, host) {
                 return {
                     request: function(method, path, headers) {
-                        assert.equal(path, '/statuses/public_timeline.html?trim_user=1&include_entities=1');
+                        assert.equal(path, '/1/statuses/public_timeline.html?trim_user=1&include_entities=1');
                         return {
                             on: function() {},
                             end: function() {
@@ -130,5 +142,27 @@ minitest.context('Create client with json object', function() {
             }
         };
         this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {});
+    });
+
+    this.assertion("method with specific base_url", function(test) {
+        this.client.httpClient = {
+            createClient: function(port, host) {
+                assert.equal(port, 80);
+                assert.equal(host, 'api2.twitter.com');
+                return {
+                    request: function(method, path, headers) {
+                        assert.equal(path, '/2/statuses/public_timeline.html');
+                        assert.equal(headers.host, 'api2.twitter.com');
+                        return {
+                            on: function() {},
+                            end: function() {
+                                test.finished();
+                            }
+                        };
+                    }
+                };
+            }
+        };
+        this.client.public_timeline2({format: 'html'}, function(err, result) {});
     });
 });
