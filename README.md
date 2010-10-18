@@ -45,6 +45,25 @@ TODO
 
 NONE
 
+## Spore spec compatibility ##
+
+### API ###
+
+* base_url : OK
+* formats  : NOK
+* api_authentication : NOK
+
+### Methods ###
+
+* method : partialy
+* path : OK
+* optional_params : OK
+* required_params : OK
+* expected_status : NOK
+* authentication : NOK
+* base_url : NOK
+* formats : NOK
+
 ## Compatibility ##
 
 Tested with node 0.2.3.
