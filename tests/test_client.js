@@ -25,7 +25,7 @@ minitest.context("Create client with filename", function () {
 minitest.context('Create client with json object', function() {
     this.setup(function() {
         this.client = new Client({
-            "api_base_url" : "http://api.twitter.com/1",
+            "base_url" : "http://api.twitter.com/1",
             "version" : "0.1",
             "methods" : {
                 "public_timeline" : {
