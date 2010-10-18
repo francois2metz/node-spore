@@ -29,15 +29,13 @@ minitest.context('Create client with json object', function() {
             "version" : "0.1",
             "methods" : {
                 "public_timeline" : {
-                    "params" : {
-                        "optional" : [
-                            "trim_user",
-                            "include_entities"
-                        ],
-                        "required" : [
-                            "format"
-                        ]
-                    },
+                    "optional_params" : [
+                        "trim_user",
+                        "include_entities"
+                    ],
+                    "required_params" : [
+                        "format"
+                    ],
                     "path" : "/statuses/public_timeline.:format",
                     "method" : "GET"
                 },
