@@ -86,9 +86,21 @@ minitest.context('Create client with json object', function() {
                             end: function() {
                                 var that = this;
                                 setTimeout(function() {
-                                    that._events.data('[{"place":null,');
-                                    that._events.data('"text": "node-spore is awesome"}, {}]');
-                                    that._events.end();
+                                    that._events.response({
+                                         _events: {},
+                                        on: function(name, callback){
+                                            this._events[name] = callback;
+                                            if (name == 'end')
+                                            {
+                                                var that = this;
+                                                setTimeout(function() {
+                                                    that._events.data('[{"place":null,');
+                                                    that._events.data('"text": "node-spore is awesome"}, {}]');
+                                                    that._events.end();
+                                                }, 100);
+                                            }
+                                        }
+                                    });
                                 }, 1000);
                             }
                         };
