@@ -40,19 +40,13 @@ With middleware you can handle authentification, special body serialization or h
 
 Middleware is an object instance, all methods are optionnal.
 
-        function HttpAuthMiddleware() {
-        }
-        HttpAuthMiddleware.prototype = {
-                process_headers: function(method, params) {
-                },
-                process_body: function(method, data) {
-                },
-                process_response: function(response) {
-                }
+        var middleware = {
+            headers  : function(method, params) {},
+            body     : function(method, data) {},
+            response : function(method, response) {}
         };
 
-        var auth = new HttpAuthMiddleware();
-        spore.createClient(auth, __dirname +'/twitter.json');
+        spore.createClient(middleware, __dirname +'/twitter.json');
 
 You can many middlewares:
 
