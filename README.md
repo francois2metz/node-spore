@@ -1,15 +1,17 @@
-# Spore on NodeJs #
+# Spore on NodeJs
 
 node-spore is an implementation of spore in nodejs.
 
 **Work in progress**: currently not working
 
-## Client ##
+## Client
+
+`spore.createClient(spore_spec)`
 
 You can contruct client with json:
 
-        var Client = require('spore').Client;
-        new Client({
+        var spore = require('spore');
+        spore.createClient({
                         "api_base_url" : "http://api.twitter.com/1",
                         "version" : "0.1",
                         "methods" : {
@@ -18,42 +20,71 @@ You can contruct client with json:
 
 Or with a file:
 
-        var Client = require('spore').Client;
-        new Client(__dirname +'/twitter.json');
+        var spore = require('spore');
+        var client = spore.createClient(__dirname +'/twitter.json');
 
-### Usage ###
+### Usage
 
 `client.method_name(params, callback)`
 
 * params: hash with key/value
-* callback: function with 2 arguments, err and result
+* callback: function with 3 parameters, err, result and response
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
 
-## Server ##
+### Middlewares
+
+Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect) and [django](http://www.djangoproject.com/).
+
+With middleware you can handle authentification, special body serialization or handle some special case. Because in real life, most API sucks.
+
+Middleware is an object instance, all methods are optionnal.
+
+        function HttpAuthMiddleware() {
+        }
+        HttpAuthMiddleware.prototype = {
+                process_headers: function(method, params) {
+                },
+                process_body: function(method, data) {
+                },
+                process_response: function(response) {
+                }
+        };
+
+        var auth = new HttpAuthMiddleware();
+        spore.createClient(auth, __dirname +'/twitter.json');
+
+You can many middlewares:
+
+        var auth = new HttpAuthMiddleware();
+        var xmlserializer = new XmlSerializerMiddleware();
+        spore.createClient(auth, xmlserializer __dirname +'/twitter.json');
+
+## Server
 
 TODO
 
+* [connect](http://github.com/senchalabs/connect)
 * [Backbone](http://github.com/documentcloud/backbone/) + Spore ?
 
-## Tests ##
+## Tests
 
         $> git submodule update --init
         $> make test
 
-## Examples ##
+## Examples
 
-NONE
+See examples/.
 
-## Spore spec compatibility ##
+## Spore spec compatibility
 
-### API ###
+### API
 
 * base_url : OK
 * formats  : NOK
 * api_authentication : NOK
 
-### Methods ###
+### Methods
 
 * method : partialy
 * path : OK
@@ -64,11 +95,11 @@ NONE
 * base_url : OK
 * formats : NOK
 
-## Compatibility ##
+## Compatibility
 
 Tested with node 0.2.3.
 
-## TODO ##
+## TODO
 
 * test, test, test
 * Code, code, code
@@ -76,10 +107,10 @@ Tested with node 0.2.3.
 * Write example with a twitter client (or statusnet :))
 * API implementation
 
-## Links ##
+## Links
 
 * [Spore specification](http://github.com/SPORE/specifications)
 
-## License ##
+## License
 
 BSD
