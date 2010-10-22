@@ -62,9 +62,16 @@ You can many middlewares:
 
 ## Server
 
-TODO
+Based on [connect](http://github.com/senchalabs/connect).
 
-* [connect](http://github.com/senchalabs/connect)
+        var server = spore.createServer(__dirname +'/twitter.json');
+        server.listen(9000);
+
+Server with middleware:
+
+        var server = spore.createServer(mymiddleware1, __dirname +'/twitter.json');
+        server.listen(9000);
+
 * [Backbone](http://github.com/documentcloud/backbone/) + Spore ?
 
 ## Tests
