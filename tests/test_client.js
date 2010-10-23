@@ -3,7 +3,7 @@ require.paths.unshift(__dirname +"/minitest");
 require.paths.unshift(__dirname +"/../lib");
 
 // we test that
-var Client = require('spore').Client;
+var spore = require('spore');
 
 var minitest = require("minitest");
 var assert   = require("assert");
@@ -12,7 +12,7 @@ minitest.setupListeners();
 
 minitest.context("Create client with filename", function () {
     this.setup(function () {
-        this.client = new Client(__dirname +'/fixtures/test.json');
+        this.client = spore.createClient(__dirname +'/fixtures/test.json');
     });
 
     this.assertion("client should have a public_timeline method", function (test) {
@@ -24,7 +24,7 @@ minitest.context("Create client with filename", function () {
 
 minitest.context('Create client with json object', function() {
     this.setup(function() {
-        this.client = new Client({
+        this.client = spore.createClient({
             "base_url" : "http://api.twitter.com/1",
             "version" : "0.1",
             "methods" : {
