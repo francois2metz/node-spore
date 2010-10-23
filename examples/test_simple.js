@@ -1,21 +1,19 @@
 require.paths.unshift(__dirname +"/../lib");
-var Client = require('spore').Client,
-    sys    = require('sys');
+var spore = require('spore'),
+    sys   = require('sys');
 
-var twitterClient = new Client({
-            "api_base_url" : "http://api.twitter.com/1",
+var twitterClient = spore.createClient({
+            "base_url" : "http://api.twitter.com/1",
             "version" : "0.1",
             "methods" : {
                 "public_timeline" : {
-                    "params" : {
-                        "optional" : [
-                            "trim_user",
-                            "include_entities"
-                        ],
-                        "required" : [
-                            "format"
-                        ]
-                    },
+                    "optional_params" : [
+                        "trim_user",
+                        "include_entities"
+                    ],
+                    "required_params" : [
+                        "format"
+                    ],
                     "path" : "/statuses/public_timeline.:format",
                     "method" : "GET"
                 },
