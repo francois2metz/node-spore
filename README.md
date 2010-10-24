@@ -60,6 +60,20 @@ You can many middlewares:
         var xmlserializer = new XmlSerializerMiddleware();
         spore.createClient(auth, xmlserializer __dirname +'/twitter.json');
 
+#### Modify request
+
+Adding http headers:
+
+            request : function(method, request) {
+                return request.headers['Content-Length'] = 42;
+            }
+
+Modify params:
+
+            request : function(method, request) {
+                return request.spore.param.id = 'myid';
+            }
+
 ## Server
 
 Based on [connect](http://github.com/senchalabs/connect).
