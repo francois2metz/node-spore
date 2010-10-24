@@ -116,6 +116,10 @@ See examples/.
 * base_url : OK
 * formats : NOK
 
+### Middlewares
+
+in progress
+
 ## Compatibility
 
 Tested with node 0.2.3.
@@ -126,7 +130,7 @@ Tested with node 0.2.3.
 * Code, code, code
 * Finish Client implementation
 * Write example with a twitter client (or statusnet :))
-* API implementation
+* Server implementation
 
 ## Links
 
