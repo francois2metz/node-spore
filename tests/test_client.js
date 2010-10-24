@@ -7,6 +7,7 @@ var spore = require('spore');
 
 var minitest = require("minitest");
 var assert   = require("assert");
+var httpmock = require("./mock_http_request");
 
 minitest.setupListeners();
 
@@ -79,45 +80,14 @@ minitest.context('Create client with json object', function() {
     });
 
     this.assertion("call remote server", function(test) {
-        this.client.httpClient = {
-            createClient: function(port, host) {
-                assert.equal(port, 80);
-                assert.equal(host, 'api.twitter.com');
-                return {
-                    request: function(method, path, headers) {
-                        assert.equal(method, 'GET');
-                        assert.equal(path, '/1/statuses/public_timeline.json');
-                        assert.equal(headers.host, 'api.twitter.com');
-                        return {
-                            _events: {},
-                            on: function(name, callback) {
-                                this._events[name] = callback;
-                            },
-                            end: function() {
-                                var that = this;
-                                setTimeout(function() {
-                                    that._events.response({
-                                         _events: {},
-                                        on: function(name, callback){
-                                            this._events[name] = callback;
-                                            if (name == 'end')
-                                            {
-                                                var that = this;
-                                                setTimeout(function() {
-                                                    that._events.data('[{"place":null,');
-                                                    that._events.data('"text": "node-spore is awesome"}, {}]');
-                                                    that._events.end();
-                                                }, 100);
-                                            }
-                                        }
-                                    });
-                                }, 1000);
-                            }
-                        };
-                    }
-                };
-            }
-        };
+        httpmock.http.addMock({
+            port: 80,
+            host : 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline.json',
+            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
+        });
+        this.client.httpClient = httpmock.http;
         this.client.public_timeline({format: 'json'}, function(err, result) {
             assert.equal(err, null, "err should be null");
             assert.equal('[{"place":null,"text": "node-spore is awesome"}, {}]' , result);
@@ -126,43 +96,30 @@ minitest.context('Create client with json object', function() {
     });
 
     this.assertion("call with other parameter ", function(test) {
-        this.client.httpClient = {
-            createClient: function(port, host) {
-                return {
-                    request: function(method, path, headers) {
-                        assert.equal(path, '/1/statuses/public_timeline.html?trim_user=1&include_entities=1');
-                        return {
-                            on: function() {},
-                            end: function() {
-                                test.finished();
-                            }
-                        };
-                    }
-                };
-            }
-        };
-        this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {});
+        httpmock.http.addMock({
+            port: 80,
+            host : 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline.html?trim_user=1&include_entities=1',
+            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
+        });
+        this.client.httpClient = httpmock.http;
+        this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {
+            test.finished();
+        });
     });
 
     this.assertion("method with specific base_url", function(test) {
-        this.client.httpClient = {
-            createClient: function(port, host) {
-                assert.equal(port, 80);
-                assert.equal(host, 'api2.twitter.com');
-                return {
-                    request: function(method, path, headers) {
-                        assert.equal(path, '/2/statuses/public_timeline.html');
-                        assert.equal(headers.host, 'api2.twitter.com');
-                        return {
-                            on: function() {},
-                            end: function() {
-                                test.finished();
-                            }
-                        };
-                    }
-                };
-            }
-        };
-        this.client.public_timeline2({format: 'html'}, function(err, result) {});
+        httpmock.http.addMock({
+            port: 80,
+            host : 'api2.twitter.com',
+            method: 'GET',
+            path: '/2/statuses/public_timeline.html',
+            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
+        });
+        this.client.httpClient = httpmock.http;
+        this.client.public_timeline2({format: 'html'}, function(err, result) {
+            test.finished();
+        });
     });
 });
