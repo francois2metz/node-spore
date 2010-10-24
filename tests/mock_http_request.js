@@ -27,8 +27,13 @@ function createClient(request, port, host) {
                 on: function(name, callback) {
                     this._events[name] = callback;
                 },
+                write: function(data) {
+                    this.data = data;
+                },
                 end: function() {
                     var that = this;
+                    if (request.data)
+                        assert.equal(this.data, request.data);
                     setTimeout(function() {
                         that._events.response({
                             _events: {},
@@ -38,7 +43,7 @@ function createClient(request, port, host) {
                                 {
                                     var that = this;
                                     setTimeout(function() {
-                                        var data = request.data;
+                                        var data = request.response_data;
                                         that._events.data(data);
                                         that._events.end();
                                     }, 100);

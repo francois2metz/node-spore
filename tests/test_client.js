@@ -23,7 +23,7 @@ minitest.context("Create client with filename", function () {
   });
 });
 
-minitest.context('Create client with object', function() {
+minitest.context("Create client with object", function() {
     this.setup(function() {
         this.client = spore.createClient({
             "base_url" : "http://api.twitter.com/1",
@@ -51,6 +51,13 @@ minitest.context('Create client with object', function() {
                     "base_url" : "http://api2.twitter.com/2",
                     "path" : "/statuses/public_timeline.:format",
                     "method" : "GET"
+                },
+                "update_user" : {
+                    "required_params" : [
+                        "id"
+                    ],
+                    "path" : "/user/:id",
+                    "method" : "POST"
                 },
             }
         });
@@ -85,7 +92,7 @@ minitest.context('Create client with object', function() {
             host: 'api.twitter.com',
             method: 'GET',
             path: '/1/statuses/public_timeline.json',
-            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
+            response_data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
         });
         this.client.httpClient = httpmock.http;
         this.client.public_timeline({format: 'json'}, function(err, result) {
@@ -101,7 +108,6 @@ minitest.context('Create client with object', function() {
             host: 'api.twitter.com',
             method: 'GET',
             path: '/1/statuses/public_timeline.html?trim_user=1&include_entities=1',
-            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
         });
         this.client.httpClient = httpmock.http;
         this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {
@@ -115,16 +121,63 @@ minitest.context('Create client with object', function() {
             host: 'api2.twitter.com',
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
-            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
         });
         this.client.httpClient = httpmock.http;
         this.client.public_timeline2({format: 'html'}, function(err, result) {
             test.finished();
         });
     });
+
+    this.assertion("method with data", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/42',
+            data: 'plop',
+        });
+        this.client.httpClient = httpmock.http;
+        this.client.update_user({id: 42}, 'plop', function(err, result) {
+            test.finished();
+        });
+    });
+
+    this.assertion("err if data is provided with a GET method", function(test) {
+        this.client.public_timeline({format: 'html'}, 'plop', function(err, result) {
+            assert.equal(result, null, 'result should be null');
+            assert.equal(err, 'data is useless');
+            test.finished();
+        });
+    });
 });
 
-minitest.context('client with middleware', function() {
+minitest.context("client with middleware", function() {
+    this.assertion("middleware should have a request param", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api2.twitter.com',
+            method: 'GET',
+            path: '/2/statuses/public_timeline.html',
+        });
+        var middleware = {
+            request: function(method, request) {
+                assert.ok(method.authentication);
+                assert.deepEqual(request.headers, {host: 'api2.twitter.com'});
+                assert.deepEqual(request.spore.params, {format: 'html'});
+                assert.deepEqual(request.spore.payload, null);
+                assert.equal(request.SERVER_PORT, 80);
+                assert.equal(request.SERVER_NAME, 'api2.twitter.com');
+                assert.equal(request.REQUEST_METHOD, 'GET');
+                assert.equal(request.PATH_INFO, '/2/statuses/public_timeline.:format');
+            }
+        };
+        var client = client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
+        client.public_timeline2({format: 'html'}, function(err, result) {
+            test.finished();
+        });
+    });
+
     this.assertion("middleware with headers transform", function(test) {
         httpmock.http.addMock({
             port: 80,
@@ -132,19 +185,34 @@ minitest.context('client with middleware', function() {
             headers: {'Accept': 'text/html,*/*;q=0.8', 'host': 'api2.twitter.com'},
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
-            data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
         });
         var middleware = {
-            headers: function(method, headers, params) {
-                assert.ok(method.authentication);
-                assert.deepEqual(headers, {host: 'api2.twitter.com'});
-                assert.deepEqual(params, {format: 'html'});
-                headers['Accept'] = 'text/html,*/*;q=0.8';
+            request: function(method, request) {
+                request.headers['Accept'] = 'text/html,*/*;q=0.8';
             }
         };
-        this.client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
-        this.client.public_timeline2({format: 'html'}, function(err, result) {
+        var client = client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
+        client.public_timeline2({format: 'html'}, function(err, result) {
+            test.finished();
+        });
+    });
+
+    this.assertion("middleware with url transform", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api2.twitter.com',
+            method: 'GET',
+            path: '/3/statuses/public.html',
+        });
+        var middleware = {
+            request: function(method, request) {
+                request.PATH_INFO = '/3/statuses/public.:format'
+            }
+        };
+        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
+        client.public_timeline2({format: 'html'}, function(err, result) {
             test.finished();
         });
     });

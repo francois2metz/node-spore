@@ -32,6 +32,8 @@ Or with a file:
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
 
+`client.method_name(params, data, callback)`
+
 ### Middlewares
 
 Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect) and [django](http://www.djangoproject.com/).
@@ -41,13 +43,12 @@ With middleware you can handle authentification, special body serialization or h
 Middleware is an object instance, all methods are optionnal.
 
         var middleware = {
-            headers  : function(method, headers, params) {
+            request : function(method, request) {
                 if (method.authentication) {
-                    headers['accept'] = 'text/html';
+                    request.headers['accept'] = 'text/html';
                 }
                 return null;
             },
-            body     : function(method, data) {},
             response : function(method, response) {}
         };
 
@@ -92,7 +93,7 @@ See examples/.
 
 ### Methods
 
-* method : partialy
+* method : OK
 * path : OK
 * optional_params : OK
 * required_params : OK
