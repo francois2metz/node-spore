@@ -9,7 +9,6 @@
  */
 
 var assert = require('assert');
-
 /**
  *
  */
@@ -21,6 +20,8 @@ function createClient(request, port, host) {
             assert.equal(method, request.method);
             assert.equal(path, request.path);
             assert.equal(headers.host, request.host);
+            if (request.headers)
+                assert.deepEqual(headers, request.headers);
             return {
                 _events: {},
                 on: function(name, callback) {

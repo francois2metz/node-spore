@@ -41,7 +41,12 @@ With middleware you can handle authentification, special body serialization or h
 Middleware is an object instance, all methods are optionnal.
 
         var middleware = {
-            headers  : function(method, params) {},
+            headers  : function(method, headers, params) {
+                if (method.authentication) {
+                    headers['accept'] = 'text/html';
+                }
+                return null;
+            },
             body     : function(method, data) {},
             response : function(method, response) {}
         };
