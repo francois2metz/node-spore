@@ -107,6 +107,27 @@ minitest.context("Create client with filename", function () {
         });
     });
 
+    this.assertion("method with required payload", function(test) {
+        this.client.update_user({id: 42}, function(err, result) {
+            assert.equal(err, "payload is required");
+            test.finished();
+        });
+    });
+
+    this.assertion("method without payload", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'PUT',
+            path: '/1/user/42',
+            payload: '',
+        });
+        this.client.reinit_user({id: 42}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
     this.assertion("err if payload is provided with a GET method", function(test) {
         this.client.public_timeline({format: 'html'}, 'plop', function(err, result) {
             assert.equal(result, null, 'result should be null');

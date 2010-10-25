@@ -32,6 +32,15 @@
             ],
             "path" : "/user/:id",
             "method" : "POST",
+            "authentication": true,
+            "required_payload": true
+        },
+        "reinit_user" : {
+            "required_params" : [
+                "id"
+            ],
+            "path" : "/user/:id",
+            "method" : "PUT",
             "authentication": true
         },
         "delete_user" : {

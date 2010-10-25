@@ -140,7 +140,7 @@ See examples/.
 * base_url : OK
 * formats : NOK (via middleware)
 * form-data: NOK
-* required_payload: NOK
+* required_payload: OK
 
 ### Middlewares
 
