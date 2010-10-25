@@ -124,7 +124,8 @@ See examples/.
 
 * base_url : OK
 * formats  : NOK (via middleware)
-* api_authentication : NOK (via middleware)
+* authentication : NOK (via middleware)
+* expected_status : NOK (via middleware)
 
 ### Methods
 
@@ -136,6 +137,8 @@ See examples/.
 * authentication : NOK (via middleware)
 * base_url : OK
 * formats : NOK (via middleware)
+* form-data: NOK
+* required_payload: NOK
 
 ### Middlewares
 
