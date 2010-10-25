@@ -194,7 +194,7 @@ minitest.context("client with middleware", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        this.middlware.request = function(method, request) {
+        this.middleware.request = function(method, request) {
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
         };
         this.client.public_timeline2({format: 'html'}, function(err, result) {
