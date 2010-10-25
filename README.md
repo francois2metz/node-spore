@@ -47,8 +47,8 @@ Example:
 
 Method without params:
 
-`client.method_name(callback)`
-`client.method_name(payload, callback)`
+        client.method_name(callback)
+        client.method_name(payload, callback)
 
 ### Middlewares
 
@@ -169,9 +169,8 @@ Tested with node 0.2.3.
 
 ## TODO
 
-* test, test, test
-* Code, code, code
-* Finish Client implementation
+* Finish client implementation
+* Construct with url
 * Write example with a twitter client (or statusnet :))
 * Server implementation
 
