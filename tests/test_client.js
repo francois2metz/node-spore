@@ -114,6 +114,14 @@ minitest.context("Create client with filename", function () {
             test.finished();
         });
     });
+
+    this.assertion("err if data is provided with a DELETE method", function(test) {
+        this.client.delete_user({id: 42}, 'plop', function(err, result) {
+            assert.equal(result, null, 'result should be null');
+            assert.equal(err, 'data is useless');
+            test.finished();
+        });
+    });
 });
 
 minitest.context("Create client with json", function() {
