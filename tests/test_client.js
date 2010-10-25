@@ -14,73 +14,14 @@ minitest.setupListeners();
 minitest.context("Create client with filename", function () {
     this.setup(function () {
         this.client = spore.createClient(__dirname +'/fixtures/test.json');
+        this.client.httpClient = httpmock.http;
     });
 
-    this.assertion("client should have a public_timeline method", function (test) {
+    this.assertion("should have a public_timeline method", function (test) {
         assert.ok(this.client.public_timeline,
                   "clientWithFile should have a public_timeline method");
         test.finished();
   });
-});
-
-minitest.context("Create client with json", function() {
-    this.setup(function () {
-        this.client = spore.createClient('{"base_url":"http://api.twitter.com/1","version":"0.1","methods":{"public_timeline":{"path":"/statuses/public_timeline.:format","method":"GET"}}}');
-    });
-
-    this.assertion("client should have a public_timeline method", function (test) {
-        assert.ok(this.client.public_timeline,
-                  "clientWithFile should have a public_timeline method");
-        test.finished();
-  });
-});
-
-minitest.context("Create client with object", function() {
-    this.setup(function() {
-        this.client = spore.createClient({
-            "base_url" : "http://api.twitter.com/1",
-            "version" : "0.1",
-            "methods" : {
-                "public_timeline" : {
-                    "optional_params" : [
-                        "trim_user",
-                        "include_entities"
-                    ],
-                    "required_params" : [
-                        "format"
-                    ],
-                    "path" : "/statuses/public_timeline.:format",
-                    "method" : "GET"
-                },
-                "public_timeline2" : {
-                    "optional_params" : [
-                        "trim_user",
-                        "include_entities"
-                    ],
-                    "required_params" : [
-                        "format"
-                    ],
-                    "base_url" : "http://api2.twitter.com/2",
-                    "path" : "/statuses/public_timeline.:format",
-                    "method" : "GET"
-                },
-                "update_user" : {
-                    "required_params" : [
-                        "id"
-                    ],
-                    "path" : "/user/:id",
-                    "method" : "POST"
-                },
-            }
-        });
-    });
-
-    this.assertion("client should have a public_timeline method", function(test) {
-
-        assert.ok(this.client.public_timeline,
-                  "client should have a public_timeline method");
-        test.finished();
-    });
 
     this.assertion("err if a required parameter is missing", function(test) {
         this.client.public_timeline({}, function(err, result) {
@@ -106,7 +47,6 @@ minitest.context("Create client with object", function() {
             path: '/1/statuses/public_timeline.json',
             response_data: '[{"place":null,"text": "node-spore is awesome"}, {}]'
         });
-        this.client.httpClient = httpmock.http;
         this.client.public_timeline({format: 'json'}, function(err, result) {
             assert.equal(err, null, "err should be null");
             assert.equal('[{"place":null,"text": "node-spore is awesome"}, {}]' , result);
@@ -114,18 +54,31 @@ minitest.context("Create client with object", function() {
         });
     });
 
-    this.assertion("call with other parameter ", function(test) {
+    this.assertion("call with query string", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
             path: '/1/statuses/public_timeline.html?trim_user=1&include_entities=1',
         });
-        this.client.httpClient = httpmock.http;
         this.client.public_timeline({format: 'html', 'trim_user': 1, 'include_entities': 1}, function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });
+
+    this.assertion("call with 2 params in path", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/user/42.html',
+        });
+        this.client.big_method({format: 'html', id : "42"}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    }),
 
     this.assertion("method with specific base_url", function(test) {
         httpmock.http.addMock({
@@ -134,8 +87,8 @@ minitest.context("Create client with object", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        this.client.httpClient = httpmock.http;
         this.client.public_timeline2({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });
@@ -148,8 +101,8 @@ minitest.context("Create client with object", function() {
             path: '/1/user/42',
             data: 'plop',
         });
-        this.client.httpClient = httpmock.http;
         this.client.update_user({id: 42}, 'plop', function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });
@@ -163,8 +116,49 @@ minitest.context("Create client with object", function() {
     });
 });
 
+minitest.context("Create client with json", function() {
+    this.setup(function () {
+        this.client = spore.createClient('{"base_url":"http://api.twitter.com/1","version":"0.1","methods":{"public_timeline":{"path":"/statuses/public_timeline.:format","method":"GET"}}}');
+    });
+
+    this.assertion("should have a public_timeline method", function (test) {
+        assert.ok(this.client.public_timeline,
+                  "clientWithFile should have a public_timeline method");
+        test.finished();
+  });
+});
+
+minitest.context("Create client with object", function() {
+    this.setup(function() {
+        this.client = spore.createClient({
+            "base_url" : "http://api.twitter.com/1",
+            "version" : "0.1",
+            "methods" : {
+                "public_timeline" : {
+                    "optional_params" : [
+                        "trim_user",
+                        "include_entities"
+                    ],
+                    "required_params" : [
+                        "format"
+                    ],
+                    "path" : "/statuses/public_timeline.:format",
+                    "method" : "GET"
+                }
+            }
+        });
+    });
+
+    this.assertion("should have a public_timeline method", function(test) {
+
+        assert.ok(this.client.public_timeline,
+                  "client should have a public_timeline method");
+        test.finished();
+    });
+});
+
 minitest.context("client with middleware", function() {
-    this.assertion("middleware should have a request param", function(test) {
+    this.assertion("should have a request param", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api2.twitter.com',
@@ -186,11 +180,12 @@ minitest.context("client with middleware", function() {
         var client = client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
         client.httpClient = httpmock.http;
         client.public_timeline2({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });
 
-    this.assertion("middleware with headers transform", function(test) {
+    this.assertion("headers transform", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api2.twitter.com',
@@ -206,11 +201,12 @@ minitest.context("client with middleware", function() {
         var client = client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
         client.httpClient = httpmock.http;
         client.public_timeline2({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });
 
-    this.assertion("middleware with url transform", function(test) {
+    this.assertion("url transform", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api2.twitter.com',
@@ -225,6 +221,28 @@ minitest.context("client with middleware", function() {
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
         client.httpClient = httpmock.http;
         client.public_timeline2({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("body transform", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/42',
+            data: 'plop'
+        });
+        var middleware = {
+            request: function(method, request) {
+                request.spore.payload = 'plop';
+            }
+        };
+        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
+        client.update_user({id: '42'}, 'plip', function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });

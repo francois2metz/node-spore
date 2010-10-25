@@ -25,6 +25,22 @@
             "path" : "/statuses/public_timeline.:format",
             "method" : "GET",
             "authentication": true
+        },
+        "update_user" : {
+            "required_params" : [
+                "id"
+            ],
+            "path" : "/user/:id",
+            "method" : "POST",
+            "authentication": true
+        },
+        "big_method" : {
+            "required_params" : [
+                "id",
+                "format"
+            ],
+            "path" : "/user/:id.:format",
+            "method" : "GET"
         }
     }
 }
