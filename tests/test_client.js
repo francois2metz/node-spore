@@ -273,7 +273,7 @@ minitest.context("Client with spore shortcut", function() {
          this.client.httpClient = httpmock.http;
     });
 
-    this.assertion("method without authentication inherits from api", function(test) {
+    this.assertion("method without authentication or formats inherits from api", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
@@ -282,6 +282,7 @@ minitest.context("Client with spore shortcut", function() {
         });
         this.middleware.request = function(method, request) {
             assert.ok(method.authentication);
+            assert.deepEqual(method.formats, ["json", "html"]);
         };
         this.client.update_user({}, function(err, result) {
             assert.equal(err, null);
@@ -289,7 +290,7 @@ minitest.context("Client with spore shortcut", function() {
         });
     });
 
-    this.assertion("method with authentication override api", function(test) {
+    this.assertion("method with authentication or formats override api", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
@@ -298,6 +299,7 @@ minitest.context("Client with spore shortcut", function() {
         });
         this.middleware.request = function(method, request) {
             assert.strictEqual(method.authentication, false);
+            assert.deepEqual(method.formats, ["xml"]);
         };
         this.client.public_timeline({}, function(err, result) {
             assert.equal(err, null);
