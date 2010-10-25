@@ -1,0 +1,16 @@
+{
+    "base_url" : "http://api.twitter.com/1",
+    "version"  : "0.1",
+    "authentication" : true,
+    "methods"  : {
+        "public_timeline" : {
+            "path" : "/statuses/public_timeline",
+            "method" : "GET",
+            "authentication": false
+        },
+        "update_user" : {
+            "path" : "/user/:id",
+            "method" : "POST"
+        }
+    }
+}

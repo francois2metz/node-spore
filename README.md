@@ -69,6 +69,10 @@ You can many middlewares:
 
 Method represent current method in spore description file.
 
+If api required authentication for all methods and a method specify ''authentication'' to false, method.authentication is false.
+
+Same for formats.
+
 #### Request object
 
 * SERVER_PORT

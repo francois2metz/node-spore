@@ -265,3 +265,43 @@ minitest.context("client with middleware", function() {
         });
     });
 });
+
+minitest.context("Client with spore shortcut", function() {
+    this.setup(function() {
+        this.middleware = {};
+        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/authentication.json');
+         this.client.httpClient = httpmock.http;
+    });
+
+    this.assertion("method without authentication inherits from api", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/:id'
+        });
+        this.middleware.request = function(method, request) {
+            assert.ok(method.authentication);
+        };
+        this.client.update_user({}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("method with authentication override api", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline'
+        });
+        this.middleware.request = function(method, request) {
+            assert.strictEqual(method.authentication, false);
+        };
+        this.client.public_timeline({}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+});
