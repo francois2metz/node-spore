@@ -136,8 +136,8 @@ minitest.context("Create client with filename", function () {
         });
     });
 
-    this.assertion("err if payload is provided with a DELETE method", function(test) {
-        this.client.delete_user({id: 42}, 'plop', function(err, result) {
+    this.assertion("err if payload is provided with a HEAD method", function(test) {
+        this.client.version({}, 'plop', function(err, result) {
             assert.equal(result, null, 'result should be null');
             assert.equal(err, 'payload is useless');
             test.finished();

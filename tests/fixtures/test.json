@@ -43,9 +43,9 @@
             "method" : "PUT",
             "authentication": true
         },
-        "delete_user" : {
-            "path" : "/user/:id",
-            "method" : "DELETE"
+        "version" : {
+            "path" : "/version",
+            "method" : "HEAD"
         },
         "big_method" : {
             "required_params" : [
