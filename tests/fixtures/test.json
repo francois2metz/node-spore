@@ -47,6 +47,14 @@
             "path" : "/version",
             "method" : "HEAD"
         },
+        "version" : {
+            "path" : "/version",
+            "method" : "HEAD"
+        },
+        "echo" : {
+            "path" : "/echo",
+            "method" : "POST"
+        },
         "big_method" : {
             "required_params" : [
                 "id",

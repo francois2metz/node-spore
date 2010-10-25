@@ -39,6 +39,17 @@ Method with payload:
 
 `client.method_name(params, payload, callback)`
 
+Example:
+
+        client.method_name({id: 42}, 'payload', function(err, result) {
+           ...
+        });
+
+Method without params:
+
+`client.method_name(callback)`
+`client.method_name(payload, callback)`
+
 ### Middlewares
 
 Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect) and [django](http://www.djangoproject.com/).

@@ -93,6 +93,33 @@ minitest.context("Create client with filename", function () {
         });
     });
 
+    this.assertion("method without params", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'HEAD',
+            path: '/1/version',
+        });
+        this.client.version(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("method without params but with payload", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/echo',
+            payload: 'mypayload'
+        });
+        this.client.echo('mypayload', function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
     this.assertion("method with payload", function(test) {
         httpmock.http.addMock({
             port: 80,
@@ -301,7 +328,7 @@ minitest.context("Client with spore shortcut", function() {
             assert.strictEqual(method.authentication, false);
             assert.deepEqual(method.formats, ["xml"]);
         };
-        this.client.public_timeline({}, function(err, result) {
+        this.client.public_timeline(function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
