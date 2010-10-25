@@ -21,7 +21,7 @@ minitest.context("Create client with filename", function () {
         assert.ok(this.client.public_timeline,
                   "clientWithFile should have a public_timeline method");
         test.finished();
-  });
+    });
 
     this.assertion("err if a required parameter is missing", function(test) {
         this.client.public_timeline({}, function(err, result) {
@@ -125,7 +125,7 @@ minitest.context("Create client with json", function() {
         assert.ok(this.client.public_timeline,
                   "clientWithFile should have a public_timeline method");
         test.finished();
-  });
+    });
 });
 
 minitest.context("Create client with object", function() {
@@ -150,7 +150,6 @@ minitest.context("Create client with object", function() {
     });
 
     this.assertion("should have a public_timeline method", function(test) {
-
         assert.ok(this.client.public_timeline,
                   "client should have a public_timeline method");
         test.finished();
@@ -158,6 +157,12 @@ minitest.context("Create client with object", function() {
 });
 
 minitest.context("client with middleware", function() {
+    this.setup(function() {
+        this.middleware = {};
+        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/test.json');
+        this.client.httpClient = httpmock.http;
+    });
+
     this.assertion("should have a request param", function(test) {
         httpmock.http.addMock({
             port: 80,
@@ -165,21 +170,17 @@ minitest.context("client with middleware", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        var middleware = {
-            request: function(method, request) {
-                assert.ok(method.authentication);
-                assert.deepEqual(request.headers, {host: 'api2.twitter.com'});
-                assert.deepEqual(request.spore.params, {format: 'html'});
-                assert.deepEqual(request.spore.payload, null);
-                assert.equal(request.SERVER_PORT, 80);
-                assert.equal(request.SERVER_NAME, 'api2.twitter.com');
-                assert.equal(request.REQUEST_METHOD, 'GET');
-                assert.equal(request.PATH_INFO, '/2/statuses/public_timeline.:format');
-            }
+        this.middleware.request = function(method, request) {
+            assert.ok(method.authentication);
+            assert.deepEqual(request.headers, {host: 'api2.twitter.com'});
+            assert.deepEqual(request.spore.params, {format: 'html'});
+            assert.deepEqual(request.spore.payload, null);
+            assert.equal(request.SERVER_PORT, 80);
+            assert.equal(request.SERVER_NAME, 'api2.twitter.com');
+            assert.equal(request.REQUEST_METHOD, 'GET');
+            assert.equal(request.PATH_INFO, '/2/statuses/public_timeline.:format');
         };
-        var client = client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
-        client.public_timeline2({format: 'html'}, function(err, result) {
+        this.client.public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -193,14 +194,10 @@ minitest.context("client with middleware", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        var middleware = {
-            request: function(method, request) {
-                request.headers['Accept'] = 'text/html,*/*;q=0.8';
-            }
+        this.middlware.request = function(method, request) {
+            request.headers['Accept'] = 'text/html,*/*;q=0.8';
         };
-        var client = client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
-        client.public_timeline2({format: 'html'}, function(err, result) {
+        this.client.public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -213,14 +210,10 @@ minitest.context("client with middleware", function() {
             method: 'GET',
             path: '/3/statuses/public.html',
         });
-        var middleware = {
-            request: function(method, request) {
-                request.PATH_INFO = '/3/statuses/public.:format'
-            }
+        this.middleware.request = function(method, request) {
+            request.PATH_INFO = '/3/statuses/public.:format'
         };
-        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
-        client.public_timeline2({format: 'html'}, function(err, result) {
+        this.client.public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -234,14 +227,10 @@ minitest.context("client with middleware", function() {
             path: '/1/user/42',
             data: 'plop'
         });
-        var middleware = {
-            request: function(method, request) {
-                request.spore.payload = 'plop';
-            }
+        this.middleware.request = function(method, request) {
+            request.spore.payload = 'plop';
         };
-        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
-        client.update_user({id: '42'}, 'plip', function(err, result) {
+        this.client.update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
