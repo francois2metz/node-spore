@@ -23,6 +23,18 @@ minitest.context("Create client with filename", function () {
   });
 });
 
+minitest.context("Create client with json", function() {
+    this.setup(function () {
+        this.client = spore.createClient('{"base_url":"http://api.twitter.com/1","version":"0.1","methods":{"public_timeline":{"path":"/statuses/public_timeline.:format","method":"GET"}}}');
+    });
+
+    this.assertion("client should have a public_timeline method", function (test) {
+        assert.ok(this.client.public_timeline,
+                  "clientWithFile should have a public_timeline method");
+        test.finished();
+  });
+});
+
 minitest.context("Create client with object", function() {
     this.setup(function() {
         this.client = spore.createClient({

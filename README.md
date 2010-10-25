@@ -8,19 +8,22 @@ node-spore is an implementation of spore in nodejs.
 
 `spore.createClient(spore_spec)`
 
-You can contruct client with json:
+You can contruct client with object:
 
         var spore = require('spore');
         spore.createClient({
-                        "api_base_url" : "http://api.twitter.com/1",
+                        "base_url" : "http://api.twitter.com/1",
                         "version" : "0.1",
                         "methods" : {
                         ....
         }});
 
+With a json string:
+
+        spore.createClient('{"base_url": ...}');
+
 Or with a file:
 
-        var spore = require('spore');
         var client = spore.createClient(__dirname +'/twitter.json');
 
 ### Usage
@@ -73,6 +76,10 @@ Modify params:
             request : function(method, request) {
                 return request.spore.param.id = 'myid';
             }
+
+#### Modify response
+
+TODO
 
 ## Server
 
