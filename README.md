@@ -41,7 +41,7 @@ If a required parameter is not defined, callback is immediatly called with err !
 
 Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect) and [django](http://www.djangoproject.com/).
 
-With middleware you can handle authentification, special body serialization or handle some special case. Because in real life, most API sucks.
+With middleware you can handle authentication, special body serialization or handle some special case. Because in real life, most API sucks.
 
 Middleware is an object instance, all methods are optionnal.
 
@@ -62,6 +62,20 @@ You can many middlewares:
         var auth = new HttpAuthMiddleware();
         var xmlserializer = new XmlSerializerMiddleware();
         spore.createClient(auth, xmlserializer __dirname +'/twitter.json');
+
+#### Method object
+
+Method represent current method in spore description file.
+
+#### Request object
+
+* SERVER_PORT
+* SERVER_NAME
+* REQUEST_METHOD
+* PATH_INFO
+* headers: not in spec
+* spore.params
+* spore.payload
 
 #### Modify request
 
@@ -109,8 +123,8 @@ See examples/.
 ### API
 
 * base_url : OK
-* formats  : NOK
-* api_authentication : NOK
+* formats  : NOK (via middleware)
+* api_authentication : NOK (via middleware)
 
 ### Methods
 
@@ -118,14 +132,16 @@ See examples/.
 * path : OK
 * optional_params : OK
 * required_params : OK
-* expected_status : NOK
-* authentication : NOK
+* expected_status : NOK (via middleware)
+* authentication : NOK (via middleware)
 * base_url : OK
-* formats : NOK
+* formats : NOK (via middleware)
 
 ### Middlewares
 
-in progress
+* request object: partial
+* disable middleware at runtine: NOK
+* return value: NOK
 
 ## Compatibility
 
