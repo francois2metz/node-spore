@@ -93,13 +93,13 @@ minitest.context("Create client with filename", function () {
         });
     });
 
-    this.assertion("method with data", function(test) {
+    this.assertion("method with payload", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
             method: 'POST',
             path: '/1/user/42',
-            data: 'plop',
+            payload: 'plop',
         });
         this.client.update_user({id: 42}, 'plop', function(err, result) {
             assert.equal(err, null);
@@ -107,18 +107,18 @@ minitest.context("Create client with filename", function () {
         });
     });
 
-    this.assertion("err if data is provided with a GET method", function(test) {
+    this.assertion("err if payload is provided with a GET method", function(test) {
         this.client.public_timeline({format: 'html'}, 'plop', function(err, result) {
             assert.equal(result, null, 'result should be null');
-            assert.equal(err, 'data is useless');
+            assert.equal(err, 'payload is useless');
             test.finished();
         });
     });
 
-    this.assertion("err if data is provided with a DELETE method", function(test) {
+    this.assertion("err if payload is provided with a DELETE method", function(test) {
         this.client.delete_user({id: 42}, 'plop', function(err, result) {
             assert.equal(result, null, 'result should be null');
-            assert.equal(err, 'data is useless');
+            assert.equal(err, 'payload is useless');
             test.finished();
         });
     });
@@ -233,7 +233,7 @@ minitest.context("client with middleware", function() {
             host: 'api.twitter.com',
             method: 'POST',
             path: '/1/user/42',
-            data: 'plop'
+            payload: 'plop'
         });
         this.middleware.request = function(method, request) {
             request.spore.payload = 'plop';

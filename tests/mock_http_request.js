@@ -32,8 +32,8 @@ function createClient(request, port, host) {
                 },
                 end: function() {
                     var that = this;
-                    if (request.data)
-                        assert.equal(this.data, request.data);
+                    if (request.payload)
+                        assert.equal(this.data, request.payload);
                     setTimeout(function() {
                         that._events.response({
                             _events: {},

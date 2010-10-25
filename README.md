@@ -35,7 +35,7 @@ Or with a file:
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
 
-`client.method_name(params, data, callback)`
+`client.method_name(params, payload, callback)`
 
 ### Middlewares
 
