@@ -82,7 +82,7 @@ Method represent current method in spore description file.
 
 If api required authentication for all methods and a method specify ''authentication'' to false, method.authentication is false.
 
-Same for formats.
+Same for formats and expected_status.
 
 #### Request object
 

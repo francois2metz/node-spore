@@ -3,12 +3,14 @@
     "version"  : "0.1",
     "authentication" : true,
     "formats" : ["json", "html"],
+    "expected_status" : [200, 500],
     "methods"  : {
         "public_timeline" : {
             "path" : "/statuses/public_timeline",
             "method" : "GET",
             "authentication": false,
-            "formats" : ["xml"]
+            "formats" : ["xml"],
+            "expected_status" : [200, 204, 503]
         },
         "update_user" : {
             "path" : "/user/:id",
