@@ -1,6 +1,6 @@
 # Spore on NodeJs
 
-node-spore is an implementation of spore in nodejs.
+node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in nodejs.
 
 **Work in progress**: currently not working
 
@@ -86,13 +86,13 @@ Same for formats and expected_status.
 
 #### Request object
 
-* SERVER_PORT
-* SERVER_NAME
-* REQUEST_METHOD
-* PATH_INFO
-* headers: not in spec
-* spore.params
-* spore.payload
+* port : server port (80, 443, ...)
+* host : host (example.com)
+* method : http method (GET, POST, ...)
+* path_info : request uri with placeholder
+* headers : http request headers as keys/values
+* params : request params as keys.values
+* payload : payload
 
 #### Modify request
 

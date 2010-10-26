@@ -229,12 +229,12 @@ minitest.context("client with middleware", function() {
         this.middleware.request = function(method, request) {
             assert.ok(method.authentication);
             assert.deepEqual(request.headers, {host: 'api2.twitter.com'});
-            assert.deepEqual(request.spore.params, {format: 'html'});
-            assert.deepEqual(request.spore.payload, null);
-            assert.equal(request.SERVER_PORT, 80);
-            assert.equal(request.SERVER_NAME, 'api2.twitter.com');
-            assert.equal(request.REQUEST_METHOD, 'GET');
-            assert.equal(request.PATH_INFO, '/2/statuses/public_timeline.:format');
+            assert.deepEqual(request.params, {format: 'html'});
+            assert.deepEqual(request.payload, null);
+            assert.equal(request.port, 80);
+            assert.equal(request.host, 'api2.twitter.com');
+            assert.equal(request.method, 'GET');
+            assert.equal(request.path_info, '/2/statuses/public_timeline.:format');
         };
         this.client.public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -267,7 +267,7 @@ minitest.context("client with middleware", function() {
             path: '/3/statuses/public.html',
         });
         this.middleware.request = function(method, request) {
-            request.PATH_INFO = '/3/statuses/public.:format'
+            request.path_info = '/3/statuses/public.:format'
         };
         this.client.public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -284,7 +284,7 @@ minitest.context("client with middleware", function() {
             payload: 'plop'
         });
         this.middleware.request = function(method, request) {
-            request.spore.payload = 'plop';
+            request.payload = 'plop';
         };
         this.client.update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
