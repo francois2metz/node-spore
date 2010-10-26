@@ -11,7 +11,8 @@
                 "format"
             ],
             "path" : "/statuses/public_timeline.:format",
-            "method" : "GET"
+            "method" : "GET",
+            "authentication": true
         },
         "public_timeline2" : {
             "optional_params" : [
@@ -21,7 +22,7 @@
             "required_params" : [
                 "format"
             ],
-            "base_url" : "http://api2.twitter.com/2",
+            "base_url" : "https://api2.twitter.com/2",
             "path" : "/statuses/public_timeline.:format",
             "method" : "GET",
             "authentication": true

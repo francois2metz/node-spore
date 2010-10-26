@@ -88,6 +88,7 @@ Same for formats and expected_status.
 
 * port : server port (80, 443, ...)
 * host : host (example.com)
+* scheme : scheme or the url (http, https)
 * method : http method (GET, POST, ...)
 * path_info : request uri with placeholder
 * headers : http request headers as keys/values

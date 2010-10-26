@@ -222,21 +222,22 @@ minitest.context("client with middleware", function() {
     this.assertion("should have a request param", function(test) {
         httpmock.http.addMock({
             port: 80,
-            host: 'api2.twitter.com',
+            host: 'api.twitter.com',
             method: 'GET',
-            path: '/2/statuses/public_timeline.html',
+            path: '/1/statuses/public_timeline.html',
         });
         this.middleware.request = function(method, request) {
             assert.ok(method.authentication);
-            assert.deepEqual(request.headers, {host: 'api2.twitter.com'});
+            assert.deepEqual(request.headers, {host: 'api.twitter.com'});
             assert.deepEqual(request.params, {format: 'html'});
             assert.deepEqual(request.payload, null);
+            assert.equal(request.scheme, 'http');
             assert.equal(request.port, 80);
-            assert.equal(request.host, 'api2.twitter.com');
+            assert.equal(request.host, 'api.twitter.com');
             assert.equal(request.method, 'GET');
-            assert.equal(request.path_info, '/2/statuses/public_timeline.:format');
+            assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
         };
-        this.client.public_timeline2({format: 'html'}, function(err, result) {
+        this.client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -251,6 +252,7 @@ minitest.context("client with middleware", function() {
             path: '/2/statuses/public_timeline.html',
         });
         this.middleware.request = function(method, request) {
+            assert.equal(request.scheme, 'https');
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
         };
         this.client.public_timeline2({format: 'html'}, function(err, result) {
