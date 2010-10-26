@@ -259,15 +259,16 @@ minitest.context("client with middleware", function() {
         });
     });
 
-    this.assertion("url transform", function(test) {
+    this.assertion("params and url transform", function(test) {
         httpmock.http.addMock({
             port: 80,
             host: 'api2.twitter.com',
             method: 'GET',
-            path: '/3/statuses/public.html',
+            path: '/3/statuses/public.json',
         });
         this.middleware.request = function(method, request) {
-            request.path_info = '/3/statuses/public.:format'
+            request.path_info = '/3/statuses/public.:format';
+            request.params.format = 'json';
         };
         this.client.public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
