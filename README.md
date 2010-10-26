@@ -106,7 +106,7 @@ Adding http headers:
 Modify params:
 
             request : function(method, request) {
-                return request.spore.param.id = 'myid';
+                return request.params.id = 'myid';
             }
 
 #### Modify response
