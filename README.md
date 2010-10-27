@@ -1,8 +1,8 @@
-# Spore on NodeJs
+# Spore on Node
 
-node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in nodejs.
+node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in (Node)[http://nodejs.org/].
 
-**Work in progress**: currently not working
+**Work in progress**
 
 ## Client
 
@@ -65,7 +65,9 @@ Middleware is an object instance, all methods are optionnal.
                 }
                 return null;
             },
-            response : function(method, response) {}
+            response : function(method, response) {
+                response.status = 500;
+            }
         };
 
         spore.createClient(middleware, __dirname +'/twitter.json');
@@ -90,15 +92,15 @@ Same for formats and expected_status.
 * host : host (example.com)
 * scheme : scheme or the url (http, https)
 * method : http method (GET, POST, ...)
-* path_info : request uri with placeholder
-* headers : http request headers as keys/values
-* params : request params as keys.values
+* path_info : request uri with placeholder (/1/example/:id)
+* headers : http request headers as keys/values({'User-Agent': 'node-spore', 'Cookie': '...'})
+* params : request params as keys/values ({id: 42})
 * payload : payload
 
 #### Response object
 
-* status
-* headers
+* status: status code (200, ...)
+* headers: response headers as keys/values
 * body
 
 #### Modify request
@@ -188,7 +190,7 @@ See examples/.
 
 * request object: partial
 * disable middleware at runtine: NOK
-* return value: NOK
+* return value: OK
 
 ## Compatibility
 
