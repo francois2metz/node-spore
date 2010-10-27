@@ -212,6 +212,50 @@ minitest.context("Create client with object", function() {
     });
 });
 
+minitest.context("Client with spore shortcut", function() {
+    this.setup(function() {
+        this.middleware = {};
+        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/authentication.json');
+         this.client.httpClient = httpmock.http;
+    });
+
+    this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/:id'
+        });
+        this.middleware.request = function(method, request) {
+            assert.ok(method.authentication);
+            assert.deepEqual(method.formats, ["json", "html"]);
+            assert.deepEqual(method.expected_status, [200, 500]);
+        };
+        this.client.update_user(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("method with authentication, formats or expected_status override api", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline'
+        });
+        this.middleware.request = function(method, request) {
+            assert.strictEqual(method.authentication, false);
+            assert.deepEqual(method.formats, ["xml"]);
+            assert.deepEqual(method.expected_status, [200, 204, 503]);
+        };
+        this.client.public_timeline(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+});
+
 minitest.context("client with request middleware", function() {
     this.setup(function() {
         this.middleware = {};
@@ -358,46 +402,58 @@ minitest.context("client with response middleware", function() {
     });
 });
 
-minitest.context("Client with spore shortcut", function() {
+minitest.context("middleware are called", function() {
     this.setup(function() {
-        this.middleware = {};
-        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/authentication.json');
-         this.client.httpClient = httpmock.http;
-    });
-
-    this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
-        httpmock.http.addMock({
-            port: 80,
-            host: 'api.twitter.com',
-            method: 'POST',
-            path: '/1/user/:id'
-        });
-        this.middleware.request = function(method, request) {
-            assert.ok(method.authentication);
-            assert.deepEqual(method.formats, ["json", "html"]);
-            assert.deepEqual(method.expected_status, [200, 500]);
-        };
-        this.client.update_user({}, function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
-    });
-
-    this.assertion("method with authentication, formats or expected_status override api", function(test) {
+        this.middleware1 = {};
+        this.middleware2 = {};
+        this.client = spore.createClient(this.middleware1, this.middleware2, __dirname +'/fixtures/test.json');
+        this.client.httpClient = httpmock.http;
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
-            path: '/1/statuses/public_timeline'
+            path: '/1/statuses/public_timeline.html',
+            statusCode: 200,
+            response_headers: {'Content-Type': 'text/html',
+                               'Server' : 'node'},
+            response_data: 'plop'
         });
-        this.middleware.request = function(method, request) {
-            assert.strictEqual(method.authentication, false);
-            assert.deepEqual(method.formats, ["xml"]);
-            assert.deepEqual(method.expected_status, [200, 204, 503]);
-        };
-        this.client.public_timeline(function(err, result) {
-            assert.equal(err, null);
-            test.finished();
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline.json',
+            statusCode: 200,
+            response_headers: {'Content-Type': 'text/html',
+                               'Server' : 'node'},
+            response_data: 'plop'
         });
     });
+
+    this.assertion("in order for request and in reverse order for response", function(test) {
+        var request = [];
+        var response = [];
+        this.middleware1.request  = function(method, r) {
+            request.push(1);
+        };
+        this.middleware1.response = function(method, r) {
+            response.push(1);
+        };
+        this.middleware2.request  = function(method, r) {
+            request.push(2);
+        };
+        this.middleware2.response = function(method, r) {
+            response.push(2);
+        };
+        var client = this.client;
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.deepEqual(request, [1, 2]);
+            assert.deepEqual(response, [2, 1]);
+            client.public_timeline({format: 'json'}, function(err, result) {
+                assert.deepEqual(request, [1, 2, 1, 2]);
+                assert.deepEqual(response, [2, 1, 2, 1]);
+                test.finished();
+            });
+        });
+    })
 });
