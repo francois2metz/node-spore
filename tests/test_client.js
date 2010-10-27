@@ -341,6 +341,25 @@ minitest.context("client with request middleware", function() {
             test.finished();
         });
     });
+
+    this.assertion("can shortcut request by return a response object", function(test) {
+        this.middleware.request = function(method, request) {
+            return {
+                code: 400,
+                headers: {'Server': 'apache'},
+                body: 'plip'
+            };
+        };
+        this.client.update_user({id: '42'}, 'plip', function(err, result) {
+            assert.equal(err, null);
+            assert.deepEqual(result, {
+                code: 400,
+                headers: {'Server': 'apache'},
+                body: 'plip'
+            });
+            test.finished();
+        });
+    });
 });
 
 minitest.context("client with response middleware", function() {
