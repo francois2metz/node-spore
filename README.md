@@ -95,6 +95,12 @@ Same for formats and expected_status.
 * params : request params as keys.values
 * payload : payload
 
+#### Response object
+
+* code
+* headers
+* body
+
 #### Modify request
 
 Adding http headers:

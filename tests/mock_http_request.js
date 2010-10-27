@@ -36,6 +36,8 @@ function createClient(request, port, host) {
                         assert.equal(this.data, request.payload);
                     setTimeout(function() {
                         that._events.response({
+                            statusCode: request.statusCode,
+                            headers: request.response_headers,
                             _events: {},
                             on: function(name, callback){
                                 this._events[name] = callback;

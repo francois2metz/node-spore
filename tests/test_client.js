@@ -49,7 +49,7 @@ minitest.context("Create client with filename", function () {
         });
         this.client.public_timeline({format: 'json'}, function(err, result) {
             assert.equal(err, null, "err should be null");
-            assert.equal('[{"place":null,"text": "node-spore is awesome"}, {}]' , result);
+            assert.equal(result.body, '[{"place":null,"text": "node-spore is awesome"}, {}]');
             test.finished();
         });
     });
@@ -212,7 +212,7 @@ minitest.context("Create client with object", function() {
     });
 });
 
-minitest.context("client with middleware", function() {
+minitest.context("client with request middleware", function() {
     this.setup(function() {
         this.middleware = {};
         this.client = spore.createClient(this.middleware, __dirname +'/fixtures/test.json');
@@ -220,6 +220,7 @@ minitest.context("client with middleware", function() {
     });
 
     this.assertion("should have a request param", function(test) {
+        var called = 0;
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
@@ -227,6 +228,7 @@ minitest.context("client with middleware", function() {
             path: '/1/statuses/public_timeline.html',
         });
         this.middleware.request = function(method, request) {
+            called++;
             assert.ok(method.authentication);
             assert.deepEqual(request.headers, {host: 'api.twitter.com'});
             assert.deepEqual(request.params, {format: 'html'});
@@ -238,6 +240,7 @@ minitest.context("client with middleware", function() {
             assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
         };
         this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(called, 1);
             assert.equal(err, null);
             test.finished();
         });
@@ -291,6 +294,65 @@ minitest.context("client with middleware", function() {
         };
         this.client.update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
+            test.finished();
+        });
+    });
+});
+
+minitest.context("client with response middleware", function() {
+    this.setup(function() {
+        this.middleware = {};
+        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/test.json');
+        this.client.httpClient = httpmock.http;
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline.html',
+            statusCode: 200,
+            response_headers: {'Content-Type': 'text/html',
+                               'Server' : 'node'},
+            response_data: 'plop'
+        });
+    });
+
+    this.assertion("should have a response param", function(test) {
+        var called = 0;
+        this.middleware.response = function(method, response) {
+            called++;
+            assert.ok(method.authentication);
+            assert.equal(response.code, 200);
+            assert.deepEqual(response.headers, {'Content-Type': 'text/html',
+                                                'Server' : 'node'});
+            assert.equal(response.body, 'plop');
+        };
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(called, 1);
+            test.finished();
+        });
+    });
+
+    this.assertion("response status and headers transform", function(test) {
+        this.middleware.response = function(method, response) {
+            response.headers.Server = 'nginx';
+            response.code = 201;
+        };
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(result.headers.Server, 'nginx');
+            assert.equal(result.code, 201);
+            test.finished();
+        });
+    });
+
+    this.assertion("response body transform", function(test) {
+        this.middleware.response = function(method, response) {
+            response.headers.Server = 'nginx';
+        };
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(result.headers.Server, 'nginx');
             test.finished();
         });
     });
