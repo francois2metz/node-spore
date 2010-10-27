@@ -97,7 +97,7 @@ Same for formats and expected_status.
 
 #### Response object
 
-* code
+* status
 * headers
 * body
 
@@ -106,18 +106,38 @@ Same for formats and expected_status.
 Adding http headers:
 
             request : function(method, request) {
-                return request.headers['Content-Length'] = 42;
+                request.headers['Content-Length'] = 42;
             }
 
 Modify params:
 
             request : function(method, request) {
-                return request.params.id = 'myid';
+                request.params.id = 'myid';
+            }
+
+Return response:
+
+            request : function(method, request) {
+                return {
+                    status   : 200,
+                    headers : {},
+                    body    : ''
+                };
             }
 
 #### Modify response
 
-TODO
+Adding http headers:
+
+            response : function(method, response) {
+                response.headers['Content-type'] = 'text/html';
+            }
+
+Transform body:
+
+            response : function(method, response) {
+                response.data = JSON.parse(response.data);
+            }
 
 ## Server
 

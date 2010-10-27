@@ -345,7 +345,7 @@ minitest.context("client with request middleware", function() {
     this.assertion("can shortcut request by return a response object", function(test) {
         this.middleware.request = function(method, request) {
             return {
-                code: 400,
+                status: 400,
                 headers: {'Server': 'apache'},
                 body: 'plip'
             };
@@ -353,7 +353,7 @@ minitest.context("client with request middleware", function() {
         this.client.update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
             assert.deepEqual(result, {
-                code: 400,
+                status: 400,
                 headers: {'Server': 'apache'},
                 body: 'plip'
             });
@@ -384,7 +384,7 @@ minitest.context("client with response middleware", function() {
         this.middleware.response = function(method, response) {
             called++;
             assert.ok(method.authentication);
-            assert.equal(response.code, 200);
+            assert.equal(response.status, 200);
             assert.deepEqual(response.headers, {'Content-Type': 'text/html',
                                                 'Server' : 'node'});
             assert.equal(response.body, 'plop');
@@ -399,12 +399,12 @@ minitest.context("client with response middleware", function() {
     this.assertion("response status and headers transform", function(test) {
         this.middleware.response = function(method, response) {
             response.headers.Server = 'nginx';
-            response.code = 201;
+            response.status = 201;
         };
         this.client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(result.headers.Server, 'nginx');
-            assert.equal(result.code, 201);
+            assert.equal(result.status, 201);
             test.finished();
         });
     });
