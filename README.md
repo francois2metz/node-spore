@@ -1,6 +1,6 @@
 # Spore on Node
 
-node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in (Node)[http://nodejs.org/].
+node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in [Node](http://nodejs.org/).
 
 **Work in progress**
 
@@ -77,6 +77,8 @@ You can many middlewares:
         var auth = new HttpAuthMiddleware();
         var xmlserializer = new XmlSerializerMiddleware();
         spore.createClient(auth, xmlserializer __dirname +'/twitter.json');
+
+If a middleware throw exception, then the callback is immediatly called, and err param contain exception.
 
 #### Method object
 

@@ -216,7 +216,7 @@ minitest.context("Client with spore shortcut", function() {
     this.setup(function() {
         this.middleware = {};
         this.client = spore.createClient(this.middleware, __dirname +'/fixtures/authentication.json');
-         this.client.httpClient = httpmock.http;
+        this.client.httpClient = httpmock.http;
     });
 
     this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
@@ -360,6 +360,16 @@ minitest.context("client with request middleware", function() {
             test.finished();
         });
     });
+
+    this.assertion("can throw exception", function(test) {
+        this.middleware.request = function(method, request) {
+            throw new Error('big exception here');
+        };
+        this.client.update_user({id: '42'}, 'plip', function(err, result) {
+            assert.equal(err.message, 'big exception here');
+            test.finished();
+        });
+    });
 });
 
 minitest.context("client with response middleware", function() {
@@ -416,6 +426,17 @@ minitest.context("client with response middleware", function() {
         this.client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(result.headers.Server, 'nginx');
+            test.finished();
+        });
+    });
+
+    this.assertion("can throw exception", function(test) {
+        this.middleware.response = function(method, response) {
+            throw new Error('big exception here');
+        };
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err.message, 'big exception here');
+            assert.notEqual(result, null);
             test.finished();
         });
     });
