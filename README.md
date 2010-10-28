@@ -4,6 +4,10 @@ node-spore is an implementation of [Spore](http://github.com/SPORE/specification
 
 **Work in progress**
 
+## Install
+
+`npm install spore`
+
 ## Client
 
 `spore.createClient(spore_spec)`
@@ -196,7 +200,7 @@ See examples/.
 
 ## Compatibility
 
-Tested with node 0.2.3.
+Tested with node 0.2.3, 0.2.4 and 0.3.0.
 
 ## TODO
 
