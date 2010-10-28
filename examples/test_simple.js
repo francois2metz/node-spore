@@ -23,7 +23,7 @@ var twitterClient = spore.createClient({
 twitterClient.public_timeline({
     format      : 'json',
 }, function(err, result) {
-    var r = JSON.parse(result);
+    var r = JSON.parse(result.body);
     for (var e in r)
     {
         sys.log(r[e].user.screen_name +' - '+ r[e].text);
