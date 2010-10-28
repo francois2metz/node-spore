@@ -31,7 +31,7 @@ Or with a file:
 `client.method_name(params, callback)`
 
 * params: hash with key/value
-* callback: function with 3 parameters, err, result and response
+* callback: function with 2 parameters, err (a string) and result (see *Response object*)
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
 
