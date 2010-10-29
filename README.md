@@ -219,8 +219,8 @@ Tested with node 0.2.3, 0.2.4 and 0.3.0.
 
 ## TODO
 
-* Finish client implementation
 * Construct with url
+* Create client with multiple definition file
 * Write example with a twitter client (or statusnet :))
 * Server implementation
 
