@@ -1,8 +1,9 @@
 require.paths.unshift(__dirname +"/../lib");
 var spore = require('spore'),
+    json  = require('middlewares').json,
     sys   = require('sys');
 
-var twitterClient = spore.createClient({
+var twitterClient = spore.createClient(json, {
             "base_url" : "http://api.twitter.com/1",
             "version" : "0.1",
             "methods" : {
@@ -23,7 +24,7 @@ var twitterClient = spore.createClient({
 twitterClient.public_timeline({
     format      : 'json',
 }, function(err, result) {
-    var r = JSON.parse(result.body);
+    var r = result.body;
     for (var e in r)
     {
         sys.log(r[e].user.screen_name +' - '+ r[e].text);

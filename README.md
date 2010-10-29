@@ -80,7 +80,7 @@ You can many middlewares:
 
         var auth = new HttpAuthMiddleware();
         var xmlserializer = new XmlSerializerMiddleware();
-        spore.createClient(auth, xmlserializer __dirname +'/twitter.json');
+        spore.createClient(auth, xmlserializer, __dirname +'/twitter.json');
 
 If a middleware throw exception, then the callback is immediatly called, and err param contain exception.
 
@@ -146,6 +146,14 @@ Transform body:
             response : function(method, response) {
                 response.data = JSON.parse(response.data);
             }
+
+#### FormatJson Middleware
+
+
+Parse JSON response if content-type is application/json.
+
+                var JsonMiddleware = require('spore/middlewares').json`
+                spore.createClient(JsonMiddleware, __dirname +'/twitter.json');
 
 ## Server
 
