@@ -147,6 +147,13 @@ Transform body:
                 response.data = JSON.parse(response.data);
             }
 
+#### Status Middleware
+
+Check if response code match expected_status in spec. Throw exception if status is not expected.
+
+                var StatusMiddleware = require('spore/middlewares').status`
+                spore.createClient(StatusMiddleware, __dirname +'/twitter.json');
+
 #### FormatJson Middleware
 
 

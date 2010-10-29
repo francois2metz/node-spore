@@ -2,7 +2,10 @@
 require.paths.unshift(__dirname +"/minitest");
 require.paths.unshift(__dirname +"/../lib");
 
-var JsonMiddleware = require('middlewares').json;
+var middlewares = require('middlewares');
+
+var JsonMiddleware = middlewares.json;
+var StatusMiddleware = middlewares.status;
 
 var minitest = require("minitest");
 var assert   = require("assert");
@@ -31,4 +34,36 @@ minitest.context("json middleware", function () {
         assert.equal(this.response.body.length, 48);
         test.finished();
     });
+});
+
+minitest.context("status middleware", function () {
+    this.setup(function () {
+        this.middleware = StatusMiddleware;
+        this.response = {
+            headers: {},
+            body: '[{"place":null,"text": "node-spore is awesome"}]'
+        };
+    });
+
+    this.assertion("throw exception if status is not in expected_status array", function (test) {
+        var that = this;
+        this.response.status = 201;
+        assert.throws(function () {
+            test.finished();
+            that.middleware.response({
+                expected_status: [200, 500]
+            }, that.response);
+        }, Error);
+    });
+
+    this.assertion("or not", function(test) {
+        var that = this;
+        this.response.status = 200;
+        assert.doesNotThrow(function () {
+            test.finished();
+            that.middleware.response({
+                expected_status: [200, 500]
+            }, that.response);
+        }, Error);
+    })
 });
