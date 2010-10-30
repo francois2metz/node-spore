@@ -160,11 +160,17 @@ Check if response code match expected_status in spec. Throw exception if status 
 
 #### FormatJson Middleware
 
-
 Parse JSON response if content-type is application/json.
 
                 var JsonMiddleware = require('spore/middlewares').json`
                 spore.createClient(JsonMiddleware, __dirname +'/twitter.json');
+
+#### Runtime middleware
+
+Add X-Spore-Runtime to the response headers. The value of the header is the time the request took to be executed.
+
+                var RuntimeMiddleware = require('spore/middlewares').runtime`
+                spore.createClient(RuntimeMiddleware, __dirname +'/twitter.json');
 
 ## Server
 

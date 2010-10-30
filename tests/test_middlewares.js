@@ -4,8 +4,9 @@ require.paths.unshift(__dirname +"/../lib");
 
 var middlewares = require('middlewares');
 
-var JsonMiddleware = middlewares.json;
-var StatusMiddleware = middlewares.status;
+var JsonMiddleware    = middlewares.json;
+var StatusMiddleware  = middlewares.status;
+var RuntimeMiddleware = middlewares.runtime;
 
 var minitest = require("minitest");
 var assert   = require("assert");
@@ -65,5 +66,23 @@ minitest.context("status middleware", function () {
                 expected_status: [200, 500]
             }, that.response);
         }, Error);
+    })
+});
+
+minitest.context("runtime middleware", function () {
+    this.setup(function () {
+        this.middleware = RuntimeMiddleware;
+        this.response = {
+            headers: {},
+            body: ''
+        };
+    });
+
+    this.assertion("add X-Spore-Runtime", function(test) {
+        var env = {};
+        this.middleware.request({}, {}, env);
+        this.middleware.response({}, this.response, env);
+        assert.equal(this.response.headers['X-Spore-Runtime'], 0);
+        test.finished();
     })
 });
