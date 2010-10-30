@@ -63,13 +63,13 @@ With middleware you can handle authentication, special body serialization or han
 Middleware is an object instance, all methods are optionnal.
 
         var middleware = {
-            request : function(method, request) {
+            request : function(method, request, env) {
                 if (method.authentication) {
                     request.headers['accept'] = 'text/html';
                 }
                 return null;
             },
-            response : function(method, response) {
+            response : function(method, response, env) {
                 response.status = 500;
             }
         };
@@ -108,6 +108,10 @@ Same for formats and expected_status.
 * status: status code (200, ...)
 * headers: response headers as keys/values
 * body
+
+#### Env object
+
+The same object is shared between request and response. So you can store what you want.
 
 #### Modify request
 

@@ -448,6 +448,9 @@ minitest.context("middleware are called", function() {
         this.middleware2 = {};
         this.client = spore.createClient(this.middleware1, this.middleware2, __dirname +'/fixtures/test.json');
         this.client.httpClient = httpmock.http;
+    });
+
+    function addHttpRequest () {
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
@@ -458,6 +461,39 @@ minitest.context("middleware are called", function() {
                                'Server' : 'node'},
             response_data: 'plop'
         });
+    }
+
+    this.assertion("with env shared between request and response", function(test) {
+        addHttpRequest();
+        this.middleware1.request  = function(method, r, env) {
+            assert.deepEqual(env, {});
+            env['chuck'] = 'norris';
+        };
+        this.middleware1.response = function(method, r, env) {
+            assert.deepEqual({chuck: 'norris'}, env);
+        };
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("and even if request middleware shorcut response", function(test) {
+        this.middleware1.request  = function(method, r, env) {
+            env['bruce'] = 'lee';
+            return {};
+        };
+        this.middleware1.response = function(method, r, env) {
+            assert.deepEqual({bruce: 'lee'}, env);
+        };
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("in order for request and in reverse order for response", function(test) {
+        addHttpRequest();
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
@@ -468,9 +504,6 @@ minitest.context("middleware are called", function() {
                                'Server' : 'node'},
             response_data: 'plop'
         });
-    });
-
-    this.assertion("in order for request and in reverse order for response", function(test) {
         var request = [];
         var response = [];
         this.middleware1.request  = function(method, r) {
