@@ -56,31 +56,25 @@ Method without params:
 
 ### Middlewares
 
-Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect) and [django](http://www.djangoproject.com/).
+Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect).
 
 With middleware you can handle authentication, special body serialization or handle some special case. Because in real life, most API sucks.
 
-Middleware is an object instance, all methods are optionnal.
+Middleware is a function. Middleware can return null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received)
 
-        var middleware = {
-            request : function(method, request, env) {
-                if (method.authentication) {
-                    request.headers['accept'] = 'text/html';
-                }
-                return null;
-            },
-            response : function(method, response, env) {
-                response.status = 500;
+        var middleware = function(method, request) {
+            if (method.authentication) {
+                request.headers['accept'] = 'text/html';
             }
+            return function(response) {
+                response.status = 500;
+            };
         };
-
         spore.createClient(middleware, __dirname +'/twitter.json');
 
 You can many middlewares:
 
-        var auth = new HttpAuthMiddleware();
-        var xmlserializer = new XmlSerializerMiddleware();
-        spore.createClient(auth, xmlserializer, __dirname +'/twitter.json');
+        spore.createClient(middleware1, middleware2, __dirname +'/twitter.json');
 
 If a middleware throw exception, then the callback is immediatly called, and err param contain exception.
 
@@ -109,27 +103,23 @@ Same for formats and expected_status.
 * headers: response headers as keys/values
 * body
 
-#### Env object
-
-The same object is shared between request and response. So you can store what you want.
-
 #### Modify request
 
 Adding http headers:
 
-            request : function(method, request) {
+            function(method, request) {
                 request.headers['Content-Length'] = 42;
             }
 
 Modify params:
 
-            request : function(method, request) {
+            function(method, request) {
                 request.params.id = 'myid';
             }
 
 Return response:
 
-            request : function(method, request) {
+            function(method, request) {
                 return {
                     status   : 200,
                     headers : {},
@@ -141,14 +131,18 @@ Return response:
 
 Adding http headers:
 
-            response : function(method, response) {
-                response.headers['Content-type'] = 'text/html';
+            function(method, request) {
+                return function(response) {
+                    response.headers['Content-type'] = 'text/html';
+                }
             }
 
 Transform body:
 
-            response : function(method, response) {
-                response.data = JSON.parse(response.data);
+            function(method, request) {
+                return function(response) {
+                    response.data = JSON.parse(response.data);
+                }
             }
 
 #### Status Middleware

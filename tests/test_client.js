@@ -213,11 +213,11 @@ minitest.context("Create client with object", function() {
 });
 
 minitest.context("Client with spore shortcut", function() {
-    this.setup(function() {
-        this.middleware = {};
-        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/authentication.json');
-        this.client.httpClient = httpmock.http;
-    });
+    function createClient(middleware) {
+        var client = spore.createClient(middleware, __dirname +'/fixtures/authentication.json');
+        client.httpClient = httpmock.http;
+        return client;
+    };
 
     this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
         httpmock.http.addMock({
@@ -226,12 +226,12 @@ minitest.context("Client with spore shortcut", function() {
             method: 'POST',
             path: '/1/user/:id'
         });
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             assert.ok(method.authentication);
             assert.deepEqual(method.formats, ["json", "html"]);
             assert.deepEqual(method.expected_status, [200, 500]);
         };
-        this.client.update_user(function(err, result) {
+        createClient(middleware).update_user(function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -244,12 +244,12 @@ minitest.context("Client with spore shortcut", function() {
             method: 'GET',
             path: '/1/statuses/public_timeline'
         });
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             assert.strictEqual(method.authentication, false);
             assert.deepEqual(method.formats, ["xml"]);
             assert.deepEqual(method.expected_status, [200, 204, 503]);
         };
-        this.client.public_timeline(function(err, result) {
+        createClient(middleware).public_timeline(function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -257,11 +257,11 @@ minitest.context("Client with spore shortcut", function() {
 });
 
 minitest.context("client with request middleware", function() {
-    this.setup(function() {
-        this.middleware = {};
-        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
-    });
+    function createClient(middleware) {
+        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
+        return client;
+    }
 
     this.assertion("should have a request param", function(test) {
         var called = 0;
@@ -271,7 +271,7 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/1/statuses/public_timeline.html',
         });
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             called++;
             assert.ok(method.authentication);
             assert.deepEqual(request.headers, {host: 'api.twitter.com'});
@@ -283,7 +283,7 @@ minitest.context("client with request middleware", function() {
             assert.equal(request.method, 'GET');
             assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
         };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        createClient(middleware).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(called, 1);
             assert.equal(err, null);
             test.finished();
@@ -298,11 +298,11 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             assert.equal(request.scheme, 'https');
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
         };
-        this.client.public_timeline2({format: 'html'}, function(err, result) {
+        createClient(middleware).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -315,11 +315,11 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/3/statuses/public.json',
         });
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             request.path_info = '/3/statuses/public.:format';
             request.params.format = 'json';
         };
-        this.client.public_timeline2({format: 'html'}, function(err, result) {
+        createClient(middleware).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -333,24 +333,24 @@ minitest.context("client with request middleware", function() {
             path: '/1/user/42',
             payload: 'plop'
         });
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             request.payload = 'plop';
         };
-        this.client.update_user({id: '42'}, 'plip', function(err, result) {
+        createClient(middleware).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
     });
 
     this.assertion("can shortcut request by return a response object", function(test) {
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             return {
                 status: 400,
                 headers: {'Server': 'apache'},
                 body: 'plip'
             };
         };
-        this.client.update_user({id: '42'}, 'plip', function(err, result) {
+        createClient(middleware).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
             assert.deepEqual(result, {
                 status: 400,
@@ -362,10 +362,10 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("can throw exception", function(test) {
-        this.middleware.request = function(method, request) {
+        var middleware = function(method, request) {
             throw new Error('big exception here');
         };
-        this.client.update_user({id: '42'}, 'plip', function(err, result) {
+        createClient(middleware).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err.message, 'big exception here');
             test.finished();
         });
@@ -373,10 +373,9 @@ minitest.context("client with request middleware", function() {
 });
 
 minitest.context("client with response middleware", function() {
-    this.setup(function() {
-        this.middleware = {};
-        this.client = spore.createClient(this.middleware, __dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
+    function setupClient(middleware) {
+        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
         httpmock.http.addMock({
             port: 80,
             host: 'api.twitter.com',
@@ -387,19 +386,21 @@ minitest.context("client with response middleware", function() {
                                'Server' : 'node'},
             response_data: 'plop'
         });
-    });
+        return client
+    };
 
     this.assertion("should have a response param", function(test) {
         var called = 0;
-        this.middleware.response = function(method, response) {
-            called++;
-            assert.ok(method.authentication);
-            assert.equal(response.status, 200);
-            assert.deepEqual(response.headers, {'Content-Type': 'text/html',
-                                                'Server' : 'node'});
-            assert.equal(response.body, 'plop');
+        var middleware = function(method, request) {
+            return function(response) {
+                called++;
+                assert.equal(response.status, 200);
+                assert.deepEqual(response.headers, {'Content-Type': 'text/html',
+                                                    'Server' : 'node'});
+                assert.equal(response.body, 'plop');
+            }
         };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 1);
             test.finished();
@@ -407,11 +408,13 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("response status and headers transform", function(test) {
-        this.middleware.response = function(method, response) {
-            response.headers.Server = 'nginx';
-            response.status = 201;
+        var middleware = function(method, request) {
+            return function(response) {
+                response.headers.Server = 'nginx';
+                response.status = 201;
+            };
         };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(result.headers.Server, 'nginx');
             assert.equal(result.status, 201);
@@ -420,10 +423,12 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("response body transform", function(test) {
-        this.middleware.response = function(method, response) {
-            response.headers.Server = 'nginx';
+        var middleware = function(method, request) {
+            return function(response) {
+                response.headers.Server = 'nginx';
+            }
         };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(result.headers.Server, 'nginx');
             test.finished();
@@ -431,10 +436,12 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("can throw exception", function(test) {
-        this.middleware.response = function(method, response) {
-            throw new Error('big exception here');
+        var middleware = function(method, request) {
+            return function(response) {
+                throw new Error('big exception here');
+            };
         };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err.message, 'big exception here');
             assert.notEqual(result, null);
             test.finished();
@@ -443,13 +450,6 @@ minitest.context("client with response middleware", function() {
 });
 
 minitest.context("middleware are called", function() {
-    this.setup(function() {
-        this.middleware1 = {};
-        this.middleware2 = {};
-        this.client = spore.createClient(this.middleware1, this.middleware2, __dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
-    });
-
     function addHttpRequest () {
         httpmock.http.addMock({
             port: 80,
@@ -463,36 +463,24 @@ minitest.context("middleware are called", function() {
         });
     }
 
-    this.assertion("with env shared between request and response", function(test) {
-        addHttpRequest();
-        this.middleware1.request  = function(method, r, env) {
-            assert.deepEqual(env, {});
-            env['chuck'] = 'norris';
-        };
-        this.middleware1.response = function(method, r, env) {
-            assert.deepEqual({chuck: 'norris'}, env);
-        };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
-    });
-
-    this.assertion("and even if request middleware shorcut response", function(test) {
-        this.middleware1.request  = function(method, r, env) {
-            env['bruce'] = 'lee';
-            return {};
-        };
-        this.middleware1.response = function(method, r, env) {
-            assert.deepEqual({bruce: 'lee'}, env);
-        };
-        this.client.public_timeline({format: 'html'}, function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
-    });
-
     this.assertion("in order for request and in reverse order for response", function(test) {
+        var request = [];
+        var response = [];
+        var middleware1  = function(method, r) {
+            request.push(1);
+            return function(r) {
+                response.push(1);
+            }
+        };
+        var middleware2 = function(method, r) {
+            request.push(2);
+            return function(r) {
+                response.push(2);
+            }
+        };
+        this.client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
+        this.client.httpClient = httpmock.http;
+
         addHttpRequest();
         httpmock.http.addMock({
             port: 80,
@@ -504,20 +492,7 @@ minitest.context("middleware are called", function() {
                                'Server' : 'node'},
             response_data: 'plop'
         });
-        var request = [];
-        var response = [];
-        this.middleware1.request  = function(method, r) {
-            request.push(1);
-        };
-        this.middleware1.response = function(method, r) {
-            response.push(1);
-        };
-        this.middleware2.request  = function(method, r) {
-            request.push(2);
-        };
-        this.middleware2.response = function(method, r) {
-            response.push(2);
-        };
+
         var client = this.client;
         this.client.public_timeline({format: 'html'}, function(err, result) {
             assert.deepEqual(request, [1, 2]);

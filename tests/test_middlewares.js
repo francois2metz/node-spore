@@ -24,14 +24,14 @@ minitest.context("json middleware", function () {
 
     this.assertion("parse json if content type is application/json", function (test) {
         this.response.headers['content-type'] = 'application/json; charset=utf-8';
-        this.middleware.response({}, this.response);
+        this.middleware({}, {})(this.response);
         assert.equal(this.response.body.length, 1);
         assert.equal(this.response.body[0].text, 'node-spore is awesome');
         test.finished();
     });
 
     this.assertion("do nothing with other content type", function (test) {
-        this.middleware.response({}, this.response);
+        this.middleware({}, {})(this.response);
         assert.equal(this.response.body.length, 48);
         test.finished();
     });
@@ -51,9 +51,9 @@ minitest.context("status middleware", function () {
         this.response.status = 201;
         assert.throws(function () {
             test.finished();
-            that.middleware.response({
+            that.middleware({
                 expected_status: [200, 500]
-            }, that.response);
+            }, {})(that.response);
         }, Error);
     });
 
@@ -62,9 +62,9 @@ minitest.context("status middleware", function () {
         this.response.status = 200;
         assert.doesNotThrow(function () {
             test.finished();
-            that.middleware.response({
+            that.middleware({
                 expected_status: [200, 500]
-            }, that.response);
+            }, {})(that.response);
         }, Error);
     })
 });
@@ -79,9 +79,7 @@ minitest.context("runtime middleware", function () {
     });
 
     this.assertion("add X-Spore-Runtime", function(test) {
-        var env = {};
-        this.middleware.request({}, {}, env);
-        this.middleware.response({}, this.response, env);
+        this.middleware({}, {})(this.response);
         assert.equal(this.response.headers['X-Spore-Runtime'], 0);
         test.finished();
     })
