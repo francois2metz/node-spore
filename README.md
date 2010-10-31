@@ -235,3 +235,14 @@ Tested with node 0.2.3, 0.2.4 and 0.3.0.
 ## License
 
 BSD
+
+## Changelog
+
+* **0.0.1-dev**
+
+  Middlewares are no more object but a function.
+  Added some middlewares
+
+* **0.0.1**
+
+  Initial version.
