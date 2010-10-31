@@ -463,6 +463,19 @@ minitest.context("middleware are called", function() {
         });
     }
 
+    this.assertion("cannot modify method object", function(test) {
+        addHttpRequest();
+        var middleware = function(method, request) {
+            assert.ok(Object.isFrozen(method));
+        };
+        this.client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        this.client.httpClient = httpmock.http;
+        this.client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
     this.assertion("in order for request and in reverse order for response", function(test) {
         var request = [];
         var response = [];
