@@ -1,3 +1,4 @@
+"use strict";
 // :(
 require.paths.unshift(__dirname +"/minitest");
 require.paths.unshift(__dirname +"/../lib");
