@@ -525,6 +525,29 @@ minitest.context("middlewares", function() {
         });
     });
 
+    this.assertion("can be disabled after init", function(test) {
+        addHttpRequest();
+        var called_1 = 0;
+        var called_2 = 0;
+        var middleware1 = function(method, request) {
+            called_1++;
+        };
+        var middleware2 = function(method, request) {
+            called_2++;
+        };
+        var client = spore.createClient(__dirname +'/fixtures/test.json');
+        client.enable(middleware1);
+        client.enable(middleware2);
+        client.disable(middleware1);
+        client.httpClient = httpmock.http;
+        client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(called_1, 0);
+            assert.equal(called_2, 1);
+            test.finished();
+        });
+    });
+
     this.assertion("are called in order for request and in reverse order for response", function(test) {
         var request = [];
         var response = [];

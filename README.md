@@ -86,6 +86,10 @@ You can also enable middleware with client::enable
         var client = spore.createClient(__dirname +'/twitter.json');
         client.enable(middleware);
 
+Or disable a middleware:
+
+        client.disable(middleware);
+
 #### Method object
 
 Method represent current method in spore description file.
