@@ -1,0 +1,8 @@
+{
+    "methods"  : {
+        "create_user" : {
+            "path" : "/user/",
+            "method" : "POST"
+        }
+    }
+}

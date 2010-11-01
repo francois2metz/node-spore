@@ -256,6 +256,38 @@ minitest.context("Client with spore shortcut", function() {
     });
 });
 
+
+minitest.context("client with multiple definition file", function() {
+    this.setup(function() {
+        this.client = spore.createClient(__dirname + '/fixtures/test1.json',
+                                         __dirname + '/fixtures/test2.json');
+        this.client.httpClient = httpmock.http;
+    });
+
+    this.assertion("should have public_timeline and create_user methods", function(test) {
+        assert.ok(this.client.create_user,
+                 "should have a create_user method");
+        assert.ok(this.client.public_timeline,
+                 "should have a public_timeline method");
+        test.finished();
+    });
+
+    this.assertion("can call remote server", function(test) {
+        httpmock.http.addMock({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/',
+            statusCode: 200,
+            response_data: 'plop'
+        });
+        this.client.create_user(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+});
+
 minitest.context("client with request middleware", function() {
     function createClient(middleware) {
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
@@ -516,5 +548,5 @@ minitest.context("middleware are called", function() {
                 test.finished();
             });
         });
-    })
+    });
 });

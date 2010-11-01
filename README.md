@@ -2,8 +2,6 @@
 
 node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in [Node](http://nodejs.org/).
 
-**Work in progress**
-
 ## Install
 
 `npm install spore`
@@ -29,6 +27,11 @@ With a json string:
 Or with a file:
 
         var client = spore.createClient(__dirname +'/twitter.json');
+
+You can create client with multiple spec:
+
+        var client = spore.createClient(__dirname +'/twitter1.json',
+                                        __dirname +'/twitter2.json');
 
 ### Usage
 
@@ -194,9 +197,8 @@ See examples/.
 ### API
 
 * base_url : OK
-* formats  : NOK (via middleware)
-* authentication : NOK (via middleware)
-* expected_status : NOK (via middleware)
+* authentication : OK (via middleware)
+* expected_status : OK (via middleware)
 
 ### Methods
 
@@ -204,10 +206,9 @@ See examples/.
 * path : OK
 * optional_params : OK
 * required_params : OK
-* expected_status : NOK (via middleware)
-* authentication : NOK (via middleware)
+* expected_status : OK (via middleware)
+* authentication : OK (via middleware)
 * base_url : OK
-* formats : NOK (via middleware)
 * form-data: NOK
 * required_payload: OK
 
@@ -224,7 +225,6 @@ Tested with node 0.2.3, 0.2.4 and 0.3.0.
 ## TODO
 
 * Construct with url
-* Create client with multiple definition file
 * Write example with a twitter client (or statusnet :))
 * Server implementation
 
@@ -241,7 +241,8 @@ BSD
 * **0.0.1-dev**
 
   Middlewares are no more object but a function.
-  Added some middlewares
+  Added some middlewares.
+  Create client with multiple spec file
 
 * **0.0.1**
 
