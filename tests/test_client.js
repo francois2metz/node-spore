@@ -548,6 +548,25 @@ minitest.context("middlewares", function() {
         });
     });
 
+    this.assertion("can be enabled if", function(test) {
+        addHttpRequest();
+        var called = 0;
+        var middleware = function(method, request) {
+            called++;
+        };
+        var client = spore.createClient(__dirname +'/fixtures/test.json');
+        client.enable_if(function(method, request) {
+            called++;
+            return true;
+        }, middleware);
+        client.httpClient = httpmock.http;
+        client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(called, 2);
+            test.finished();
+        });
+    });
+
     this.assertion("are called in order for request and in reverse order for response", function(test) {
         var request = [];
         var response = [];

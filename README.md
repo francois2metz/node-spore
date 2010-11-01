@@ -86,6 +86,16 @@ You can also enable middleware with client::enable
         var client = spore.createClient(__dirname +'/twitter.json');
         client.enable(middleware);
 
+Or enable enable middleware only if:
+
+        var client = spore.createClient(__dirname +'/twitter.json');
+        client.enable_if(function(method, request) {
+            if (!method.authentication) {
+                return false;
+            }
+            return true
+        }, middleware);
+
 Or disable a middleware:
 
         client.disable(middleware);
