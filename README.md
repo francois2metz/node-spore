@@ -261,6 +261,7 @@ BSD
 
   Middlewares are no more object but a function.
   Added some middlewares.
+  Added *enable*, *enable_if* and *disable* methods.
   Create client with multiple spec file
 
 * **0.0.1**
