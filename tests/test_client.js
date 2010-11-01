@@ -482,7 +482,7 @@ minitest.context("client with response middleware", function() {
     });
 });
 
-minitest.context("middleware are called", function() {
+minitest.context("middlewares", function() {
     function addHttpRequest () {
         httpmock.http.addMock({
             port: 80,
@@ -501,15 +501,31 @@ minitest.context("middleware are called", function() {
         var middleware = function(method, request) {
             assert.ok(Object.isFrozen(method));
         };
-        this.client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
+        client.httpClient = httpmock.http;
+        client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
     });
 
-    this.assertion("in order for request and in reverse order for response", function(test) {
+    this.assertion("can be enabled after init", function(test) {
+        addHttpRequest();
+        var called = 0;
+        var middleware = function(method, request) {
+            called++;
+        };
+        var client = spore.createClient(__dirname +'/fixtures/test.json');
+        client.enable(middleware);
+        client.httpClient = httpmock.http;
+        client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(called, 1);
+            test.finished();
+        });
+    });
+
+    this.assertion("are called in order for request and in reverse order for response", function(test) {
         var request = [];
         var response = [];
         var middleware1  = function(method, r) {

@@ -81,6 +81,11 @@ You can many middlewares:
 
 If a middleware throw exception, then the callback is immediatly called, and err param contain exception.
 
+You can also enable middleware with client::enable
+
+        var client = spore.createClient(__dirname +'/twitter.json');
+        client.enable(middleware);
+
 #### Method object
 
 Method represent current method in spore description file.
