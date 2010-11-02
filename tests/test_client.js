@@ -468,6 +468,29 @@ minitest.context("client with response middleware", function() {
         });
     });
 
+    this.assertion("can shortcut response", function(test) {
+        var mock_response = {status: 200, headers: {}, body: 'plop'};
+        var called = 0;
+        var middleware1 = function(method, request) {
+            return function(response) {
+                return mock_response;
+            }
+        };
+        var middleware2 = function(method, request) {
+            return function(response) {
+                called++;
+            }
+        };
+        var client = setupClient(middleware2);
+        client.enable(middleware1);
+        client.public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(called, 0);
+            assert.strictEqual(result, mock_response);
+            test.finished();
+        });
+    });
+
     this.assertion("can throw exception", function(test) {
         var middleware = function(method, request) {
             return function(response) {

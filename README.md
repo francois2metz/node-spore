@@ -167,6 +167,15 @@ Transform body:
                 }
             }
 
+Interrupt response middlewares by return response:
+
+            function(method, request) {
+                return function(response) {
+                    response.headers['Content-type'] = 'text/html';
+                    return response;
+                }
+            }
+
 #### Status Middleware
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
