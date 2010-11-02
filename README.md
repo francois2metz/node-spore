@@ -228,14 +228,9 @@ See examples/.
 * expected_status : OK (via middleware)
 * authentication : OK (via middleware)
 * base_url : OK
-* form-data: NOK
 * required_payload: OK
-
-### Middlewares
-
-* request object: partial
-* disable middleware at runtine: NOK
-* return value: OK
+* form-data: NOK
+* headers : NOK
 
 ## Compatibility
 
@@ -260,9 +255,12 @@ BSD
 * **0.0.1-dev**
 
   Middlewares are no more object but a function.
+
   Added some middlewares.
+
   Added *enable*, *enable_if* and *disable* methods.
-  Create client with multiple spec file
+
+  Create client with multiple spec file.
 
 * **0.0.1**
 
