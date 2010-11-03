@@ -59,13 +59,17 @@ function createClient(request, port, host) {
     };
 }
 
-exports.http = {
-    mock: [],
-    createClient: function(port, host) {
-        var request = this.mock.shift();
-        return createClient(request, port, host);
-    },
-    addMock: function(mock) {
-        this.mock.push(mock);
-    }
+exports.init = function() {
+    var mocks = [];
+    return {
+        http : {
+            createClient: function(port, host) {
+                var request = mocks.shift();
+                return createClient(request, port, host);
+            }
+        },
+        add: function(mock) {
+            mocks.push(mock);
+        }
+    };
 };

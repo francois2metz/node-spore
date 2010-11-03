@@ -15,7 +15,8 @@ minitest.setupListeners();
 minitest.context("Create client with filename", function () {
     this.setup(function () {
         this.client = spore.createClient(__dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
+        this.mock   = httpmock.init();
+        this.client.httpClient = this.mock.http;
     });
 
     this.assertion("should have a public_timeline method", function (test) {
@@ -41,7 +42,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("call remote server", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -56,7 +57,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("call with query string", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -69,7 +70,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("call with 2 params in path", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -82,7 +83,7 @@ minitest.context("Create client with filename", function () {
     }),
 
     this.assertion("method with specific base_url", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api2.twitter.com',
             method: 'GET',
@@ -95,7 +96,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("method without params", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'HEAD',
@@ -108,7 +109,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("method without params but with payload", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'POST',
@@ -122,7 +123,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("method with payload", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'POST',
@@ -143,7 +144,7 @@ minitest.context("Create client with filename", function () {
     });
 
     this.assertion("method without payload", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'PUT',
@@ -213,92 +214,20 @@ minitest.context("Create client with object", function() {
     });
 });
 
-minitest.context("Client with spore shortcut", function() {
-    function createClient(middleware) {
-        var client = spore.createClient(middleware, __dirname +'/fixtures/authentication.json');
-        client.httpClient = httpmock.http;
-        return client;
-    };
-
-    this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
-        httpmock.http.addMock({
-            port: 80,
-            host: 'api.twitter.com',
-            method: 'POST',
-            path: '/1/user/:id'
-        });
-        var middleware = function(method, request) {
-            assert.ok(method.authentication);
-            assert.deepEqual(method.formats, ["json", "html"]);
-            assert.deepEqual(method.expected_status, [200, 500]);
-        };
-        createClient(middleware).update_user(function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
-    });
-
-    this.assertion("method with authentication, formats or expected_status override api", function(test) {
-        httpmock.http.addMock({
-            port: 80,
-            host: 'api.twitter.com',
-            method: 'GET',
-            path: '/1/statuses/public_timeline'
-        });
-        var middleware = function(method, request) {
-            assert.strictEqual(method.authentication, false);
-            assert.deepEqual(method.formats, ["xml"]);
-            assert.deepEqual(method.expected_status, [200, 204, 503]);
-        };
-        createClient(middleware).public_timeline(function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
-    });
-});
-
-
-minitest.context("client with multiple definition file", function() {
-    this.setup(function() {
-        this.client = spore.createClient(__dirname + '/fixtures/test1.json',
-                                         __dirname + '/fixtures/test2.json');
-        this.client.httpClient = httpmock.http;
-    });
-
-    this.assertion("should have public_timeline and create_user methods", function(test) {
-        assert.ok(this.client.create_user,
-                 "should have a create_user method");
-        assert.ok(this.client.public_timeline,
-                 "should have a public_timeline method");
-        test.finished();
-    });
-
-    this.assertion("can call remote server", function(test) {
-        httpmock.http.addMock({
-            port: 80,
-            host: 'api.twitter.com',
-            method: 'POST',
-            path: '/1/user/',
-            statusCode: 200,
-            response_data: 'plop'
-        });
-        this.client.create_user(function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
-    });
-});
-
 minitest.context("client with request middleware", function() {
-    function createClient(middleware) {
+    this.setup(function() {
+        this.mock = httpmock.init();
+    });
+
+    function createClient(middleware, mock) {
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
+        client.httpClient = mock.http;
         return client;
     }
 
     this.assertion("should have a request param", function(test) {
         var called = 0;
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -316,7 +245,7 @@ minitest.context("client with request middleware", function() {
             assert.equal(request.method, 'GET');
             assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
         };
-        createClient(middleware).public_timeline({format: 'html'}, function(err, result) {
+        createClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(called, 1);
             assert.equal(err, null);
             test.finished();
@@ -324,7 +253,7 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("headers transform", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api2.twitter.com',
             headers: {'Accept': 'text/html,*/*;q=0.8', 'host': 'api2.twitter.com'},
@@ -335,14 +264,14 @@ minitest.context("client with request middleware", function() {
             assert.equal(request.scheme, 'https');
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
         };
-        createClient(middleware).public_timeline2({format: 'html'}, function(err, result) {
+        createClient(middleware, this.mock).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
     });
 
     this.assertion("params and url transform", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api2.twitter.com',
             method: 'GET',
@@ -352,14 +281,14 @@ minitest.context("client with request middleware", function() {
             request.path_info = '/3/statuses/public.:format';
             request.params.format = 'json';
         };
-        createClient(middleware).public_timeline2({format: 'html'}, function(err, result) {
+        createClient(middleware, this.mock).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
     });
 
     this.assertion("body transform", function(test) {
-        httpmock.http.addMock({
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'POST',
@@ -369,7 +298,7 @@ minitest.context("client with request middleware", function() {
         var middleware = function(method, request) {
             request.payload = 'plop';
         };
-        createClient(middleware).update_user({id: '42'}, 'plip', function(err, result) {
+        createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
@@ -383,7 +312,7 @@ minitest.context("client with request middleware", function() {
                 body: 'plip'
             };
         };
-        createClient(middleware).update_user({id: '42'}, 'plip', function(err, result) {
+        createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
             assert.deepEqual(result, {
                 status: 400,
@@ -398,7 +327,7 @@ minitest.context("client with request middleware", function() {
         var middleware = function(method, request) {
             throw new Error('big exception here');
         };
-        createClient(middleware).update_user({id: '42'}, 'plip', function(err, result) {
+        createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err.message, 'big exception here');
             test.finished();
         });
@@ -406,10 +335,14 @@ minitest.context("client with request middleware", function() {
 });
 
 minitest.context("client with response middleware", function() {
-    function setupClient(middleware) {
+    this.setup(function() {
+        this.mock = httpmock.init();
+    });
+
+    function setupClient(middleware, mock) {
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
-        httpmock.http.addMock({
+        client.httpClient = mock.http;
+        mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -433,7 +366,7 @@ minitest.context("client with response middleware", function() {
                 assert.equal(response.body, 'plop');
             }
         };
-        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 1);
             test.finished();
@@ -447,7 +380,7 @@ minitest.context("client with response middleware", function() {
                 response.status = 201;
             };
         };
-        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(result.headers.Server, 'nginx');
             assert.equal(result.status, 201);
@@ -461,7 +394,7 @@ minitest.context("client with response middleware", function() {
                 response.headers.Server = 'nginx';
             }
         };
-        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(result.headers.Server, 'nginx');
             test.finished();
@@ -481,7 +414,7 @@ minitest.context("client with response middleware", function() {
                 called++;
             }
         };
-        var client = setupClient(middleware2);
+        var client = setupClient(middleware2, this.mock);
         client.enable(middleware1);
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -497,7 +430,7 @@ minitest.context("client with response middleware", function() {
                 throw new Error('big exception here');
             };
         };
-        setupClient(middleware).public_timeline({format: 'html'}, function(err, result) {
+        setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err.message, 'big exception here');
             assert.notEqual(result, null);
             test.finished();
@@ -506,8 +439,12 @@ minitest.context("client with response middleware", function() {
 });
 
 minitest.context("middlewares", function() {
-    function addHttpRequest () {
-        httpmock.http.addMock({
+    this.setup(function() {
+        this.mock = httpmock.init();
+    });
+
+    function addHttpRequest (mock) {
+        mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -520,12 +457,12 @@ minitest.context("middlewares", function() {
     }
 
     this.assertion("cannot modify method object", function(test) {
-        addHttpRequest();
+        addHttpRequest(this.mock);
         var middleware = function(method, request) {
             assert.ok(Object.isFrozen(method));
         };
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = httpmock.http;
+        client.httpClient = this.mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
@@ -533,14 +470,14 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("can be enabled after init", function(test) {
-        addHttpRequest();
+        addHttpRequest(this.mock);
         var called = 0;
         var middleware = function(method, request) {
             called++;
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable(middleware);
-        client.httpClient = httpmock.http;
+        client.httpClient = this.mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 1);
@@ -549,7 +486,7 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("can be disabled after init", function(test) {
-        addHttpRequest();
+        addHttpRequest(this.mock);
         var called_1 = 0;
         var called_2 = 0;
         var middleware1 = function(method, request) {
@@ -562,7 +499,7 @@ minitest.context("middlewares", function() {
         client.enable(middleware1);
         client.enable(middleware2);
         client.disable(middleware1);
-        client.httpClient = httpmock.http;
+        client.httpClient = this.mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called_1, 0);
@@ -572,7 +509,7 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("can be enabled if", function(test) {
-        addHttpRequest();
+        addHttpRequest(this.mock);
         var called = 0;
         var middleware = function(method, request) {
             called++;
@@ -582,7 +519,7 @@ minitest.context("middlewares", function() {
             called++;
             return true;
         }, middleware);
-        client.httpClient = httpmock.http;
+        client.httpClient = this.mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 2);
@@ -606,10 +543,10 @@ minitest.context("middlewares", function() {
             }
         };
         this.client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
-        this.client.httpClient = httpmock.http;
+        this.client.httpClient = this.mock.http;
 
-        addHttpRequest();
-        httpmock.http.addMock({
+        addHttpRequest(this.mock);
+        this.mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -629,6 +566,84 @@ minitest.context("middlewares", function() {
                 assert.deepEqual(response, [2, 1, 2, 1]);
                 test.finished();
             });
+        });
+    });
+});
+
+minitest.context("Client with spore shortcut", function() {
+    function createClient(middleware, mock) {
+        var client = spore.createClient(middleware, __dirname +'/fixtures/authentication.json');
+        client.httpClient = mock.http;
+        return client
+    };
+
+    this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
+        var mock = httpmock.init();
+        mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/:id'
+        });
+        var middleware = function(method, request) {
+            assert.ok(method.authentication);
+            assert.deepEqual(method.formats, ["json", "html"]);
+            assert.deepEqual(method.expected_status, [200, 500]);
+        };
+        createClient(middleware, mock).update_user(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion("method with authentication, formats or expected_status override api", function(test) {
+        var mock = httpmock.init();
+        mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline'
+        });
+        var middleware = function(method, request) {
+            assert.strictEqual(method.authentication, false);
+            assert.deepEqual(method.formats, ["xml"]);
+            assert.deepEqual(method.expected_status, [200, 204, 503]);
+        };
+        createClient(middleware, mock).public_timeline(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+});
+
+minitest.context("client with multiple definition file", function() {
+    this.setup(function() {
+        this.client = spore.createClient(__dirname + '/fixtures/test1.json',
+                                         __dirname + '/fixtures/test2.json');
+        this.mock = httpmock.init();
+        this.client.httpClient = this.mock.http;
+    });
+
+    this.assertion("should have public_timeline and create_user methods", function(test) {
+        assert.ok(this.client.create_user,
+                 "should have a create_user method");
+        assert.ok(this.client.public_timeline,
+                 "should have a public_timeline method");
+        test.finished();
+    });
+
+    this.assertion("can call remote server", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/',
+            statusCode: 200,
+            response_data: 'plop'
+        });
+        this.client.create_user(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
         });
     });
 });
