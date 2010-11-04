@@ -16,12 +16,17 @@ function createClient(request, port, host) {
     assert.equal(port, request.port);
     assert.equal(host, request.host);
     return {
+        _events: {},
+        on: function(name, callback) {
+            this._events[name] = callback;
+        },
         request: function(method, path, headers) {
             assert.equal(method, request.method);
             assert.equal(path, request.path);
             assert.equal(headers.host, request.host);
             if (request.headers)
                 assert.deepEqual(headers, request.headers);
+            var client = this;
             return {
                 _events: {},
                 on: function(name, callback) {
@@ -32,6 +37,12 @@ function createClient(request, port, host) {
                 },
                 end: function() {
                     var that = this;
+                    if (request.error) {
+                        setTimeout(function() {
+                            client._events['error'](request.error);
+                        }, 100);
+                        return;
+                    }
                     if (request.payload)
                         assert.equal(this.data, request.payload);
                     setTimeout(function() {

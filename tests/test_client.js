@@ -172,6 +172,21 @@ minitest.context("Create client with filename", function () {
             test.finished();
         });
     });
+
+    this.assertion("err if request error", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'HEAD',
+            path: '/1/version',
+            error: 'ECONNREFUSED'
+        });
+        this.client.version(function(err, result) {
+            assert.equal(result, null, 'result should be null');
+            assert.equal(err, 'ECONNREFUSED');
+            test.finished();
+        });
+    });
 });
 
 minitest.context("Create client with json", function() {
