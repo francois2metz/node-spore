@@ -376,14 +376,14 @@ minitest.context("client with response middleware", function() {
 
     this.assertion("should have a response param", function(test) {
         var called = 0;
-        var middleware = function(method, request) {
-            return function(response) {
+        var middleware = function(method, request, callback) {
+            callback(function(response) {
                 called++;
                 assert.equal(response.status, 200);
                 assert.deepEqual(response.headers, {'Content-Type': 'text/html',
                                                     'Server' : 'node'});
                 assert.equal(response.body, 'plop');
-            }
+            });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -393,11 +393,11 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("response status and headers transform", function(test) {
-        var middleware = function(method, request) {
-            return function(response) {
+        var middleware = function(method, request, callback) {
+            callback(function(response) {
                 response.headers.Server = 'nginx';
                 response.status = 201;
-            };
+            });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -408,10 +408,10 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("response body transform", function(test) {
-        var middleware = function(method, request) {
-            return function(response) {
+        var middleware = function(method, request, callback) {
+            callback(function(response) {
                 response.headers.Server = 'nginx';
-            }
+            });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -423,15 +423,15 @@ minitest.context("client with response middleware", function() {
     this.assertion("can shortcut response", function(test) {
         var mock_response = {status: 200, headers: {}, body: 'plop'};
         var called = 0;
-        var middleware1 = function(method, request) {
-            return function(response) {
+        var middleware1 = function(method, request, callback) {
+            callback(function(response) {
                 return mock_response;
-            }
+            });
         };
-        var middleware2 = function(method, request) {
-            return function(response) {
+        var middleware2 = function(method, request, callback) {
+            callback(function(response) {
                 called++;
-            }
+            });
         };
         var client = setupClient(middleware2, this.mock);
         client.enable(middleware1);
@@ -444,10 +444,10 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("can throw exception", function(test) {
-        var middleware = function(method, request) {
-            return function(response) {
+        var middleware = function(method, request, callback) {
+            callback(function(response) {
                 throw new Error('big exception here');
-            };
+            });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err.message, 'big exception here');
