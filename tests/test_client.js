@@ -248,7 +248,7 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/1/statuses/public_timeline.html',
         });
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             called++;
             assert.ok(method.authentication);
             assert.deepEqual(request.headers, {host: 'api.twitter.com'});
@@ -259,6 +259,7 @@ minitest.context("client with request middleware", function() {
             assert.equal(request.host, 'api.twitter.com');
             assert.equal(request.method, 'GET');
             assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
+            callback();
         };
         createClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(called, 1);
@@ -275,9 +276,10 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             assert.equal(request.scheme, 'https');
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
+            callback();
         };
         createClient(middleware, this.mock).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -292,9 +294,10 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/3/statuses/public.json',
         });
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             request.path_info = '/3/statuses/public.:format';
             request.params.format = 'json';
+            callback();
         };
         createClient(middleware, this.mock).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -310,8 +313,9 @@ minitest.context("client with request middleware", function() {
             path: '/1/user/42',
             payload: 'plop'
         });
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             request.payload = 'plop';
+            callback();
         };
         createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
@@ -320,12 +324,12 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("can shortcut request by return a response object", function(test) {
-        var middleware = function(method, request) {
-            return {
+        var middleware = function(method, request, callback) {
+            callback({
                 status: 400,
                 headers: {'Server': 'apache'},
                 body: 'plip'
-            };
+            });
         };
         createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
@@ -339,7 +343,7 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("can throw exception", function(test) {
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             throw new Error('big exception here');
         };
         createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {

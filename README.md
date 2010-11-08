@@ -63,15 +63,15 @@ Middleware in spore-node are inspired from [connect](http://github.com/senchalab
 
 With middleware you can handle authentication, special body serialization or handle some special case. Because in real life, most API sucks.
 
-Middleware is a function. Middleware can return null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received)
+Middleware is a function. Middleware should callback, with null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received)
 
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             if (method.authentication) {
                 request.headers['accept'] = 'text/html';
             }
-            return function(response) {
+            callback(function(response) {
                 response.status = 500;
-            };
+            });
         };
         spore.createClient(middleware, __dirname +'/twitter.json');
 
@@ -129,51 +129,53 @@ Same for formats and expected_status.
 
 Adding http headers:
 
-            function(method, request) {
+            function(method, request, callback) {
                 request.headers['Content-Length'] = 42;
+                callback();
             }
 
 Modify params:
 
-            function(method, request) {
+            function(method, request, callback) {
                 request.params.id = 'myid';
+                callback();
             }
 
 Return response:
 
-            function(method, request) {
-                return {
+            function(method, request, callback) {
+                callback({
                     status   : 200,
                     headers : {},
                     body    : ''
-                };
+                });
             }
 
 #### Modify response
 
 Adding http headers:
 
-            function(method, request) {
-                return function(response) {
+            function(method, request, callback) {
+                callback(function(response) {
                     response.headers['Content-type'] = 'text/html';
-                }
+                });
             }
 
 Transform body:
 
-            function(method, request) {
-                return function(response) {
+            function(method, request, callback) {
+                callback(function(response) {
                     response.data = JSON.parse(response.data);
-                }
+                });
             }
 
 Interrupt response middlewares by return response:
 
-            function(method, request) {
-                return function(response) {
+            function(method, request, callback) {
+                callback(function(response) {
                     response.headers['Content-type'] = 'text/html';
                     return response;
-                }
+                });
             }
 
 #### Status Middleware
