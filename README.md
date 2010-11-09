@@ -265,7 +265,7 @@ BSD
 
 * **0.0.1-dev**
 
-  Middlewares are no more object but a function.
+  Middlewares are no more object but a function. Middlewares are also async. The third argument is a callback.
 
   Added some middlewares.
 
