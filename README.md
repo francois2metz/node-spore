@@ -115,6 +115,7 @@ Same for formats and expected_status.
 * scheme : scheme or the url (http, https)
 * method : http method (GET, POST, ...)
 * path_info : request uri with placeholder (/1/example/:id)
+* uri :  *readonly* request uri without placehoder (/1/example/42)
 * headers : http request headers as keys/values({'User-Agent': 'node-spore', 'Cookie': '...'})
 * params : request params as keys/values ({id: 42})
 * payload : payload

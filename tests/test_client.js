@@ -259,6 +259,7 @@ minitest.context("client with request middleware", function() {
             assert.equal(request.host, 'api.twitter.com');
             assert.equal(request.method, 'GET');
             assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
+            assert.equal(request.uri, '/1/statuses/public_timeline.html');
             callback();
         };
         createClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
