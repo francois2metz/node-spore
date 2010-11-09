@@ -63,13 +63,13 @@ Middleware in spore-node are inspired from [connect](http://github.com/senchalab
 
 With middleware you can handle authentication, special body serialization or handle some special case. Because in real life, most API sucks.
 
-Middleware is a function. Middleware should callback, with null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received)
+Middleware is a function. Middleware should call *next*, with null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received).
 
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             if (method.authentication) {
                 request.headers['accept'] = 'text/html';
             }
-            callback(function(response) {
+            next(function(response) {
                 response.status = 500;
             });
         };
@@ -129,22 +129,22 @@ Same for formats and expected_status.
 
 Adding http headers:
 
-            function(method, request, callback) {
+            function(method, request, next) {
                 request.headers['Content-Length'] = 42;
-                callback();
+                next();
             }
 
 Modify params:
 
-            function(method, request, callback) {
+            function(method, request, next) {
                 request.params.id = 'myid';
-                callback();
+                next();
             }
 
 Return response:
 
-            function(method, request, callback) {
-                callback({
+            function(method, request, next) {
+                next({
                     status   : 200,
                     headers : {},
                     body    : ''
@@ -155,16 +155,16 @@ Return response:
 
 Adding http headers:
 
-            function(method, request, callback) {
-                callback(function(response) {
+            function(method, request, next) {
+                next(function(response) {
                     response.headers['Content-type'] = 'text/html';
                 });
             }
 
 Transform body:
 
-            function(method, request, callback) {
-                callback(function(response) {
+            function(method, request, next {
+                next(function(response) {
                     response.data = JSON.parse(response.data);
                 });
             }
@@ -172,7 +172,7 @@ Transform body:
 Interrupt response middlewares by return response:
 
             function(method, request, callback) {
-                callback(function(response) {
+                next(function(response) {
                     response.headers['Content-type'] = 'text/html';
                     return response;
                 });
@@ -265,7 +265,7 @@ BSD
 
 * **0.0.1-dev**
 
-  Middlewares are no more object but a function. Middlewares are also async. The third argument is a callback.
+  Middlewares are no more object but a function. Middlewares are also async. The third argument is a callback *next*.
 
   Added some middlewares.
 
