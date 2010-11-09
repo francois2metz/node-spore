@@ -458,10 +458,6 @@ minitest.context("client with response middleware", function() {
 });
 
 minitest.context("middlewares", function() {
-    this.setup(function() {
-        this.mock = httpmock.init();
-    });
-
     function addHttpRequest (mock) {
         mock.add({
             port: 80,
@@ -476,12 +472,14 @@ minitest.context("middlewares", function() {
     }
 
     this.assertion("cannot modify method object", function(test) {
-        addHttpRequest(this.mock);
-        var middleware = function(method, request) {
+        var mock = httpmock.init();
+        addHttpRequest(mock);
+        var middleware = function(method, request, callback) {
             assert.ok(Object.isFrozen(method));
+            callback();
         };
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = this.mock.http;
+        client.httpClient = mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
@@ -489,14 +487,16 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("can be enabled after init", function(test) {
-        addHttpRequest(this.mock);
+        var mock = httpmock.init();
+        addHttpRequest(mock);
         var called = 0;
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             called++;
+            callback();
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable(middleware);
-        client.httpClient = this.mock.http;
+        client.httpClient = mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 1);
@@ -505,20 +505,23 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("can be disabled after init", function(test) {
-        addHttpRequest(this.mock);
+        var mock = httpmock.init();
+        addHttpRequest(mock);
         var called_1 = 0;
         var called_2 = 0;
-        var middleware1 = function(method, request) {
+        var middleware1 = function(method, request, callback) {
             called_1++;
+            callback();
         };
-        var middleware2 = function(method, request) {
+        var middleware2 = function(method, request, callback) {
             called_2++;
+            callback();
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable(middleware1);
         client.enable(middleware2);
         client.disable(middleware1);
-        client.httpClient = this.mock.http;
+        client.httpClient = mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called_1, 0);
@@ -528,17 +531,19 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("can be enabled if", function(test) {
-        addHttpRequest(this.mock);
+        var mock = httpmock.init();
+        addHttpRequest(mock);
         var called = 0;
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             called++;
+            callback();
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable_if(function(method, request) {
             called++;
             return true;
         }, middleware);
-        client.httpClient = this.mock.http;
+        client.httpClient = mock.http;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 2);
@@ -547,25 +552,26 @@ minitest.context("middlewares", function() {
     });
 
     this.assertion("are called in order for request and in reverse order for response", function(test) {
-        var request = [];
+        var mock = httpmock.init();
+        var request  = [];
         var response = [];
-        var middleware1  = function(method, r) {
+        var middleware1  = function(method, r, callback) {
             request.push(1);
-            return function(r) {
+            callback(function(r) {
                 response.push(1);
-            }
+            });
         };
-        var middleware2 = function(method, r) {
+        var middleware2 = function(method, r, callback) {
             request.push(2);
-            return function(r) {
+            callback(function(r) {
                 response.push(2);
-            }
+            });
         };
-        this.client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
-        this.client.httpClient = this.mock.http;
+        var client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
+        client.httpClient = mock.http;
 
-        addHttpRequest(this.mock);
-        this.mock.add({
+        addHttpRequest(mock);
+        mock.add({
             port: 80,
             host: 'api.twitter.com',
             method: 'GET',
@@ -576,8 +582,7 @@ minitest.context("middlewares", function() {
             response_data: 'plop'
         });
 
-        var client = this.client;
-        this.client.public_timeline({format: 'html'}, function(err, result) {
+        client.public_timeline({format: 'html'}, function(err, result) {
             assert.deepEqual(request, [1, 2]);
             assert.deepEqual(response, [2, 1]);
             client.public_timeline({format: 'json'}, function(err, result) {
@@ -604,10 +609,11 @@ minitest.context("Client with spore shortcut", function() {
             method: 'POST',
             path: '/1/user/:id'
         });
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             assert.ok(method.authentication);
             assert.deepEqual(method.formats, ["json", "html"]);
             assert.deepEqual(method.expected_status, [200, 500]);
+            callback();
         };
         createClient(middleware, mock).update_user(function(err, result) {
             assert.equal(err, null);
@@ -623,10 +629,11 @@ minitest.context("Client with spore shortcut", function() {
             method: 'GET',
             path: '/1/statuses/public_timeline'
         });
-        var middleware = function(method, request) {
+        var middleware = function(method, request, callback) {
             assert.strictEqual(method.authentication, false);
             assert.deepEqual(method.formats, ["xml"]);
             assert.deepEqual(method.expected_status, [200, 204, 503]);
+            callback();
         };
         createClient(middleware, mock).public_timeline(function(err, result) {
             assert.equal(err, null);
