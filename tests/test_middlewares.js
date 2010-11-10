@@ -87,7 +87,12 @@ minitest.context("runtime middleware", function () {
 
 minitest.context("oauth1 middleware", function () {
     this.setup(function() {
-
+        this.request = {
+            headers: {},
+            scheme: 'https',
+            host: 'example.net',
+            uri: '/plop'
+        };
     });
 
     this.assertion("add Authorization header", function(test) {
@@ -99,28 +104,15 @@ minitest.context("oauth1 middleware", function () {
                 return 'plop';
             }
         };
-        var request = {
-            headers: {},
-            scheme: 'https',
-            host: 'example.net',
-            uri: '/plop'
-        };
-        OAuth1Middleware(oauth, "token", "secret")({authentication: true}, request, function() {});
-        assert.equal(request.headers['Authorization'], 'plop');
+        OAuth1Middleware(oauth, "token", "secret")({authentication: true}, this.request, function() {});
+        assert.equal(this.request.headers['Authorization'], 'plop');
         test.finished();
     })
 
     this.assertion("don't add Authorization header", function(test) {
-        var oauth = {
-        };
-        var request = {
-            headers: {},
-            scheme: 'https',
-            host: 'example.net',
-            uri: '/plop'
-        };
-        OAuth1Middleware(oauth, "token", "secret")({authentication: false}, request, function() {});
-        assert.equal(request.headers['Authorization'], undefined);
+        var oauth = {};
+        OAuth1Middleware(oauth, "token", "secret")({authentication: false}, this.request, function() {});
+        assert.equal(this.request.headers['Authorization'], undefined);
         test.finished();
     })
 });
