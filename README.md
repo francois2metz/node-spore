@@ -1,6 +1,6 @@
 # Spore on Node
 
-node-spore is an implementation of [Spore](http://github.com/SPORE/specifications) in [Node](http://nodejs.org/).
+node-spore is an implementation of [Spore](https://github.com/SPORE/specifications) in [Node](http://nodejs.org/).
 
 ## Install
 
@@ -179,6 +179,14 @@ Interrupt response middlewares by return response:
                 });
             }
 
+#### OAuth1 Middleware
+
+Add oauth headers for each requests with authentication == true. Need [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
+
+                var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
+                var OAuthMiddleware = require('spore/middlewares').oauth1(oauth, access_token, access_token_secret);
+                spore.createClient(OAuthMiddleware, __dirname +'/twitter.json');
+
 #### Status Middleware
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
@@ -256,7 +264,7 @@ Tested with node 0.2.3, 0.2.4 and 0.3.0.
 
 ## Links
 
-* [Spore specification](http://github.com/SPORE/specifications)
+* [Spore specification](https://github.com/SPORE/specifications)
 
 ## License
 
@@ -268,7 +276,7 @@ BSD
 
   Middlewares are no more object but a function. Middlewares are also async. The third argument is a callback *next*.
 
-  Added some middlewares.
+  Added some middlewares (json, status, runtime and oauth1).
 
   Added *enable*, *enable_if* and *disable* methods.
 

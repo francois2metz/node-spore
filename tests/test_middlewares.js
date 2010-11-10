@@ -8,6 +8,7 @@ var middlewares = require('middlewares');
 var JsonMiddleware    = middlewares.json;
 var StatusMiddleware  = middlewares.status;
 var RuntimeMiddleware = middlewares.runtime;
+var OAuth1Middleware  = middlewares.oauth1;
 
 var minitest = require("minitest");
 var assert   = require("assert");
@@ -80,6 +81,46 @@ minitest.context("runtime middleware", function () {
         };
         RuntimeMiddleware({}, {}, function(c) {c(response) });
         assert.equal(response.headers['X-Spore-Runtime'], 0);
+        test.finished();
+    })
+});
+
+minitest.context("oauth1 middleware", function () {
+    this.setup(function() {
+
+    });
+
+    this.assertion("add Authorization header", function(test) {
+        var oauth = {
+            authHeader: function(url, token, token_secret, method) {
+                assert.equal(url, 'https://example.net/plop');
+                assert.equal(token, "token");
+                assert.equal(token_secret, "secret");
+                return 'plop';
+            }
+        };
+        var request = {
+            headers: {},
+            scheme: 'https',
+            host: 'example.net',
+            uri: '/plop'
+        };
+        OAuth1Middleware(oauth, "token", "secret")({authentication: true}, request, function() {});
+        assert.equal(request.headers['Authorization'], 'plop');
+        test.finished();
+    })
+
+    this.assertion("don't add Authorization header", function(test) {
+        var oauth = {
+        };
+        var request = {
+            headers: {},
+            scheme: 'https',
+            host: 'example.net',
+            uri: '/plop'
+        };
+        OAuth1Middleware(oauth, "token", "secret")({authentication: false}, request, function() {});
+        assert.equal(request.headers['Authorization'], undefined);
         test.finished();
     })
 });
