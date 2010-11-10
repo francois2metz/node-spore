@@ -183,30 +183,27 @@ Interrupt response middlewares by return response:
 
 Add oauth headers for each requests with authentication == true. Need [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
 
+                var OAuth = require('oauth');
                 var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
                 var OAuthMiddleware = require('spore/middlewares').oauth1(oauth, access_token, access_token_secret);
-                spore.createClient(OAuthMiddleware, __dirname +'/twitter.json');
 
 #### Status Middleware
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
 
                 var StatusMiddleware = require('spore/middlewares').status`
-                spore.createClient(StatusMiddleware, __dirname +'/twitter.json');
 
 #### FormatJson Middleware
 
 Parse JSON response if content-type is application/json.
 
                 var JsonMiddleware = require('spore/middlewares').json`
-                spore.createClient(JsonMiddleware, __dirname +'/twitter.json');
 
 #### Runtime middleware
 
 Add X-Spore-Runtime to the response headers. The value of the header is the time the request took to be executed.
 
                 var RuntimeMiddleware = require('spore/middlewares').runtime`
-                spore.createClient(RuntimeMiddleware, __dirname +'/twitter.json');
 
 ## Server
 
@@ -219,8 +216,6 @@ Server with middleware:
 
         var server = spore.createServer(mymiddleware1, __dirname +'/twitter.json');
         server.listen(9000);
-
-* [Backbone](http://github.com/documentcloud/backbone/) + Spore ?
 
 ## Tests
 
