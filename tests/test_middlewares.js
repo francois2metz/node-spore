@@ -27,17 +27,23 @@ minitest.context("json middleware", function () {
     this.assertion("parse json if content type is application/json", function (test) {
         var response = this.response;
         response.headers['content-type'] = 'application/json; charset=utf-8';
-        this.middleware({}, {}, function(c) {c(response);});
-        assert.equal(this.response.body.length, 1);
-        assert.equal(this.response.body[0].text, 'node-spore is awesome');
-        test.finished();
+        this.middleware({}, {}, function(callback) {
+            callback(response, function() {
+                assert.equal(response.body.length, 1);
+                assert.equal(response.body[0].text, 'node-spore is awesome');
+                test.finished();
+            });
+        });
     });
 
     this.assertion("do nothing with other content type", function (test) {
         var response = this.response;
-        this.middleware({}, {}, function(c) {c(response);});
-        assert.equal(this.response.body.length, 48);
-        test.finished();
+        this.middleware({}, {}, function(callback) {
+            callback(response, function() {
+                assert.equal(response.body.length, 48);
+                test.finished();
+            });
+        });
     });
 });
 
@@ -57,7 +63,7 @@ minitest.context("status middleware", function () {
             test.finished();
             that.middleware({
                 expected_status: [200, 500]
-            }, {}, function(c) {c(that.response)});
+            }, {}, function(c) {c(that.response);});
         }, Error);
     });
 
@@ -65,10 +71,13 @@ minitest.context("status middleware", function () {
         var that = this;
         this.response.status = 200;
         assert.doesNotThrow(function () {
-            test.finished();
             that.middleware({
                 expected_status: [200, 500]
-            }, {}, function(c) {c(that.response); });
+            }, {}, function(callback) {
+                callback(that.response, function() {
+                    test.finished();
+                });
+            });
         }, Error);
     })
 });
@@ -79,9 +88,12 @@ minitest.context("runtime middleware", function () {
             headers: {},
             body: ''
         };
-        RuntimeMiddleware({}, {}, function(c) {c(response) });
-        assert.equal(response.headers['X-Spore-Runtime'], 0);
-        test.finished();
+        RuntimeMiddleware({}, {}, function(callback) {
+            callback(response, function() {
+                assert.equal(response.headers['X-Spore-Runtime'], 0);
+                test.finished();
+            });
+        });
     })
 });
 
