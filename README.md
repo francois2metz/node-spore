@@ -61,7 +61,7 @@ Method without params:
 
 Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect).
 
-With middleware you can handle authentication, special body serialization or handle some special case. Because in real life, most API sucks.
+With middleware you can handle authentication, special body serialization or some special case. Because in real life, most API sucks.
 
 Middleware is a function. Middleware should call *next*, with null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received).
 
@@ -69,8 +69,9 @@ Middleware is a function. Middleware should call *next*, with null (and next mid
             if (method.authentication) {
                 request.headers['accept'] = 'text/html';
             }
-            next(function(response) {
+            next(function(response, next) {
                 response.status = 500;
+                next();
             });
         };
         spore.createClient(middleware, __dirname +'/twitter.json');
@@ -93,7 +94,7 @@ Or enable enable middleware only if:
             if (!method.authentication) {
                 return false;
             }
-            return true
+            return true;
         }, middleware);
 
 Or disable a middleware:
@@ -157,25 +158,27 @@ Return response:
 Adding http headers:
 
             function(method, request, next) {
-                next(function(response) {
+                next(function(response, next) {
                     response.headers['Content-type'] = 'text/html';
+                    next();
                 });
             }
 
 Transform body:
 
             function(method, request, next {
-                next(function(response) {
+                next(function(response, next) {
                     response.data = JSON.parse(response.data);
+                    next();
                 });
             }
 
 Interrupt response middlewares by return response:
 
             function(method, request, callback) {
-                next(function(response) {
+                next(function(response, next) {
                     response.headers['Content-type'] = 'text/html';
-                    return response;
+                    next(response);
                 });
             }
 

@@ -372,18 +372,19 @@ minitest.context("client with response middleware", function() {
                                'Server' : 'node'},
             response_data: 'plop'
         });
-        return client
+        return client;
     };
 
     this.assertion("should have a response param", function(test) {
         var called = 0;
         var middleware = function(method, request, callback) {
-            callback(function(response) {
+            callback(function(response, callback) {
                 called++;
                 assert.equal(response.status, 200);
                 assert.deepEqual(response.headers, {'Content-Type': 'text/html',
                                                     'Server' : 'node'});
                 assert.equal(response.body, 'plop');
+                callback();
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -395,9 +396,10 @@ minitest.context("client with response middleware", function() {
 
     this.assertion("response status and headers transform", function(test) {
         var middleware = function(method, request, callback) {
-            callback(function(response) {
+            callback(function(response, callback) {
                 response.headers.Server = 'nginx';
                 response.status = 201;
+                callback();
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -410,8 +412,9 @@ minitest.context("client with response middleware", function() {
 
     this.assertion("response body transform", function(test) {
         var middleware = function(method, request, callback) {
-            callback(function(response) {
+            callback(function(response, callback) {
                 response.headers.Server = 'nginx';
+                callback();
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -425,8 +428,8 @@ minitest.context("client with response middleware", function() {
         var mock_response = {status: 200, headers: {}, body: 'plop'};
         var called = 0;
         var middleware1 = function(method, request, callback) {
-            callback(function(response) {
-                return mock_response;
+            callback(function(response, callback) {
+                callback(mock_response);
             });
         };
         var middleware2 = function(method, request, callback) {
@@ -446,7 +449,7 @@ minitest.context("client with response middleware", function() {
 
     this.assertion("can throw exception", function(test) {
         var middleware = function(method, request, callback) {
-            callback(function(response) {
+            callback(function(response, callback) {
                 throw new Error('big exception here');
             });
         };
@@ -558,14 +561,16 @@ minitest.context("middlewares", function() {
         var response = [];
         var middleware1  = function(method, r, callback) {
             request.push(1);
-            callback(function(r) {
+            callback(function(r, callback) {
                 response.push(1);
+                callback();
             });
         };
         var middleware2 = function(method, r, callback) {
             request.push(2);
-            callback(function(r) {
+            callback(function(r, callback) {
                 response.push(2);
+                callback();
             });
         };
         var client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
