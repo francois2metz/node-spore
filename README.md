@@ -270,15 +270,23 @@ BSD
 
 ## Changelog
 
-* **0.0.1-dev**
+* **0.0.2**
 
-  Middlewares are no more object but a function. Middlewares are also async. The third argument is a callback *next*.
+  Middlewares are no more object but a function.
+
+  Middlewares are also async. The third or second argument is a callback *next*.
+
+  Response middlewares can return a response object and break the chain.
 
   Added some middlewares (json, status, runtime and oauth1).
 
   Added *enable*, *enable_if* and *disable* methods.
 
   Create client with multiple spec file.
+
+  Added uri to request object.
+
+  Handle http error.
 
 * **0.0.1**
 
