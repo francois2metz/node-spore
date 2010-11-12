@@ -63,6 +63,13 @@
             ],
             "path" : "/user/:id.:format",
             "method" : "GET"
+        },
+        "with_headers" : {
+            "headers" : {
+                "Accept" : "text/html"
+            },
+            "path" : "/user/",
+            "method" : "GET"
         }
     }
 }

@@ -187,6 +187,23 @@ minitest.context("Create client with filename", function () {
             test.finished();
         });
     });
+
+    this.assertion("send headers without placeholder", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            headers: {
+                "host"   :"api.twitter.com",
+                "Accept" : "text/html"
+            },
+            path: '/1/user/'
+        });
+        this.client.with_headers(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
 });
 
 minitest.context("Create client with json", function() {
