@@ -247,7 +247,7 @@ See examples/.
 * authentication : OK (via middleware)
 * base_url : OK
 * required_payload: OK
-* deprecated : NOK
+* deprecated : OK
 * form-data: NOK
 * headers : OK
 
@@ -275,7 +275,9 @@ BSD
 
   Normalize HTTP verb to upper case.
 
-  Handle headers with placeholder
+  Handle headers with placeholder.
+
+  Warning when you are using a deprecated method.
 
 * **0.0.2**
 
