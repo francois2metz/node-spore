@@ -36,7 +36,20 @@ minitest.context("Create client with filename", function () {
     this.assertion("err if unknow param ", function(test) {
         this.client.public_timeline({format: 'json', unknowparam: 'foo'}, function(err, result) {
             assert.equal(result, null, 'result should be null');
-            assert.equal(err, 'unknowparam param is unknow'); // very funny
+            assert.equal(err, 'unattended param unknowparam');
+            test.finished();
+        });
+    });
+
+    this.assertion("no err if unattended params === true", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api2.twitter.com',
+            method: 'GET',
+            path: '/2/statuses/public_timeline.json?unknowparam=foo',
+        });
+        this.client.public_timeline2({format: 'json', unknowparam: 'foo'}, function(err, result) {
+            assert.equal(err, null);
             test.finished();
         });
     });
@@ -673,7 +686,7 @@ minitest.context("Client with spore shortcut", function() {
         return client
     };
 
-    this.assertion("method without authentication, formats or expected_status inherits from api", function(test) {
+    this.assertion("method inherits: authentication, formats, expected_status, unattended_params", function(test) {
         var mock = httpmock.init();
         mock.add({
             port: 80,
@@ -683,6 +696,7 @@ minitest.context("Client with spore shortcut", function() {
         });
         var middleware = function(method, request, callback) {
             assert.ok(method.authentication);
+            assert.ok(method.unattended_params);
             assert.deepEqual(method.formats, ["json", "html"]);
             assert.deepEqual(method.expected_status, [200, 500]);
             callback();
@@ -693,7 +707,7 @@ minitest.context("Client with spore shortcut", function() {
         });
     });
 
-    this.assertion("method with authentication, formats or expected_status override api", function(test) {
+    this.assertion("method override: authentication, formats, expected_status, unattended_params", function(test) {
         var mock = httpmock.init();
         mock.add({
             port: 80,
@@ -703,6 +717,7 @@ minitest.context("Client with spore shortcut", function() {
         });
         var middleware = function(method, request, callback) {
             assert.strictEqual(method.authentication, false);
+            assert.strictEqual(method.unattended_params, false);
             assert.deepEqual(method.formats, ["xml"]);
             assert.deepEqual(method.expected_status, [200, 204, 503]);
             callback();

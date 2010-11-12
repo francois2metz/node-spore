@@ -248,8 +248,9 @@ See examples/.
 * base_url : OK
 * required_payload: OK
 * deprecated : OK
-* form-data: NOK
 * headers : OK
+* unattended_params: OK
+* form-data: NOK
 
 ## Compatibility
 
@@ -278,6 +279,8 @@ BSD
   Handle headers with placeholder.
 
   Warning when you are using a deprecated method.
+
+  Handle unattended_params.
 
 * **0.0.2**
 

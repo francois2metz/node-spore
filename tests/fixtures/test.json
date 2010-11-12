@@ -12,7 +12,8 @@
             ],
             "path" : "/statuses/public_timeline.:format",
             "method" : "get",
-            "authentication": true
+            "authentication": true,
+            "unattended_params": false
         },
         "public_timeline2" : {
             "optional_params" : [
@@ -25,7 +26,8 @@
             "base_url" : "https://api2.twitter.com/2",
             "path" : "/statuses/public_timeline.:format",
             "method" : "GET",
-            "authentication": true
+            "authentication": true,
+            "unattended_params": true
         },
         "update_user" : {
             "required_params" : [

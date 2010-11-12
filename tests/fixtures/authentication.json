@@ -4,13 +4,15 @@
     "authentication" : true,
     "formats" : ["json", "html"],
     "expected_status" : [200, 500],
+    "unattended_params": true,
     "methods"  : {
         "public_timeline" : {
             "path" : "/statuses/public_timeline",
             "method" : "GET",
             "authentication": false,
             "formats" : ["xml"],
-            "expected_status" : [200, 204, 503]
+            "expected_status" : [200, 204, 503],
+            "unattended_params": false
         },
         "update_user" : {
             "path" : "/user/:id",
