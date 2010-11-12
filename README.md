@@ -247,8 +247,9 @@ See examples/.
 * authentication : OK (via middleware)
 * base_url : OK
 * required_payload: OK
+* deprecated : NOK
 * form-data: NOK
-* headers : NOK
+* headers : OK
 
 ## Compatibility
 
@@ -273,6 +274,8 @@ BSD
 * **0.0.3pre**
 
   Normalize HTTP verb to upper case.
+
+  Handle headers with placeholder
 
 * **0.0.2**
 

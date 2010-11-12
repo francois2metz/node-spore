@@ -70,6 +70,14 @@
             },
             "path" : "/user/",
             "method" : "GET"
+        },
+        "with_headers_placeholder" : {
+            "required_params": ["language1", "language2"],
+            "headers" : {
+                "Accept-language" : ":language1, :language2"
+            },
+            "path" : "/user/",
+            "method" : "GET"
         }
     }
 }
