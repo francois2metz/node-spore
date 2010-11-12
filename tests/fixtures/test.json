@@ -11,7 +11,7 @@
                 "format"
             ],
             "path" : "/statuses/public_timeline.:format",
-            "method" : "GET",
+            "method" : "get",
             "authentication": true
         },
         "public_timeline2" : {

@@ -270,6 +270,10 @@ BSD
 
 ## Changelog
 
+* **0.0.3pre**
+
+  Normalize HTTP verb to upper case.
+
 * **0.0.2**
 
   Middlewares are no more object but a function.
