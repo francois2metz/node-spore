@@ -80,6 +80,11 @@
             },
             "path" : "/user/",
             "method" : "GET"
+        },
+        "with_query_string": {
+            "required_params": ["format", "param1"],
+            "path" : "/user.:format?foo=:param1",
+            "method" : "GET"
         }
     }
 }

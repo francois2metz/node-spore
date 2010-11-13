@@ -95,6 +95,19 @@ minitest.context("Create client with filename", function () {
         });
     }),
 
+    this.assertion("path with query string", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/user.html?foo=bar',
+        });
+        this.client.with_query_string({format: 'html', param1 : "bar"}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
     this.assertion("method with specific base_url", function(test) {
         this.mock.add({
             port: 80,
