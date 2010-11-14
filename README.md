@@ -183,9 +183,15 @@ Interrupt response middlewares by return response:
                 });
             }
 
+#### AuthBasic Middleware
+
+HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrumins/node-base64).
+
+                var AuthBasic = require('spore/middlewares').basic(username, password);
+
 #### OAuth1 Middleware
 
-Add oauth headers for each requests with authentication == true. Need [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
+Add oauth headers for each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
 
                 var OAuth = require('oauth');
                 var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
@@ -282,6 +288,10 @@ BSD
   Warning when you are using a deprecated method.
 
   Handle unattended_params.
+
+  Added request.query_string.
+
+  Added AuthBasic middleware.
 
 * **0.0.2**
 

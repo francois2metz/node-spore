@@ -8,6 +8,7 @@ var middlewares = require('middlewares');
 var JsonMiddleware    = middlewares.json;
 var StatusMiddleware  = middlewares.status;
 var RuntimeMiddleware = middlewares.runtime;
+var BasicMiddleware   = middlewares.basic;
 var OAuth1Middleware  = middlewares.oauth1;
 
 var minitest = require("minitest");
@@ -95,6 +96,18 @@ minitest.context("runtime middleware", function () {
             });
         });
     })
+});
+
+minitest.context("basic middleware", function() {
+    this.assertion("add authorization header", function(test) {
+        var request = {
+            headers: {}
+        };
+        BasicMiddleware("user", "pwd")({}, request, function() {
+            assert.ok(request.headers['Authorization'] !== undefined);
+            test.finished();
+        });
+    });
 });
 
 minitest.context("oauth1 middleware", function () {
