@@ -13,6 +13,24 @@ var sys      = require("sys");
 
 var port = 5555;
 
+/** https://github.com/visionmedia/expresso/blob/master/bin/expresso#L208
+* Colorize the given string using ansi-escape sequences.
+* Disabled when --boring is set.
+*
+* @param {String} str
+* @return {String}
+*/
+
+function colorize(str){
+    var boring = false;
+    var colors = { bold: 1, red: 31, green: 32, yellow: 33 };
+    return str.replace(/\[(\w+)\]\{([^]*?)\}/g, function(_, color, str){
+        return boring
+            ? str
+            : '\x1B[' + colors[color] + 'm' + str + '\x1B[0m';
+    });
+}
+
 /** assert.response from expresso (http://github.com/visionmedia/expresso/blob/master/bin/expresso) */
 /**
 * Assert response from `server` with
@@ -73,7 +91,6 @@ assertResponse = function(server, req, res, msg){
         response.setEncoding('utf8');
         response.addListener('data', function(chunk){ response.body += chunk; });
         response.addListener('end', function(){
-            console.log("request end");
             --server.__pending || server.close();
             if (timer) clearTimeout(timer);
 
@@ -138,16 +155,39 @@ minitest.context("server", function () {
     this.assertion("create methods", function(test) {
         spore.createServer(this.app, __dirname +'/fixtures/test.json', {
             public_timeline: function(req, res) {
-                console.log("public timeline");
-                res.send('hello world');
+                res.send('Hello '+ req.params.format);
+                res.end();
+            },
+            echo: function(req, res) {
+                res.send('echo');
                 res.end();
                 test.finished();
             }
         });
         assertResponse(this.app,
-                        {   method: 'GET',
-                            headers: {},
-                            url: '/statuses/public_timeline.json' },
-            { body: 'Hello word' });
+                       {   method: 'GET',
+                           headers: {},
+                           url: '/statuses/public_timeline.json' },
+                       { body: 'Hello json' });
+        assertResponse(this.app,
+                       {   method: 'POST',
+                           headers: {},
+                           url: '/echo' },
+                       { body: 'echo' });
+    });
+
+    this.assertion("return 501 Not Implemented if the method is not provided", function(test) {
+        spore.createServer(this.app, __dirname +'/fixtures/test.json', {
+            public_timeline: function(req, res) {
+
+            }
+        });
+        assertResponse(this.app,
+                       {   method: 'POST',
+                           headers: {},
+                           url: '/echo' },
+                       { status: 501 }, function() {
+                           test.finished();
+                       });
     });
 });
