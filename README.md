@@ -35,9 +35,10 @@ You can create client with multiple spec:
 
 ### Usage
 
-`client.method_name(params, callback)`
+`client.method_name([params, ][payload, ]callback)`
 
-* params: hash with key/value
+* params: hash with key/value (optionnal)
+* payload: content of the request (optionnal)
 * callback: function with 2 parameters, err (a string) and result (see *Response object*)
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
