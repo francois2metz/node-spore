@@ -23,7 +23,7 @@
             "required_params" : [
                 "format"
             ],
-            "base_url" : "https://api2.twitter.com/2",
+            "base_url" : "http://api2.twitter.com/2",
             "path" : "/statuses/public_timeline.:format",
             "method" : "GET",
             "authentication": true,

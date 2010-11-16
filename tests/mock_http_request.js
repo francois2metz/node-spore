@@ -12,9 +12,11 @@ var assert = require('assert');
 /**
  *
  */
-function createClient(request, port, host) {
+function createClient(request, port, host, secure, credentials) {
     assert.equal(port, request.port);
     assert.equal(host, request.host);
+    if (request.secure !== undefined)
+        assert.equal(secure, request.secure);
     return {
         _events: {},
         on: function(name, callback) {
@@ -74,9 +76,9 @@ exports.init = function() {
     var mocks = [];
     return {
         http : {
-            createClient: function(port, host) {
+            createClient: function(port, host, secure, credentials) {
                 var request = mocks.shift();
-                return createClient(request, port, host);
+                return createClient(request, port, host, secure, credentials);
             }
         },
         add: function(mock) {

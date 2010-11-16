@@ -1,0 +1,11 @@
+{
+    "base_url" : "https://api.twitter.com/1",
+    "version"  : "0.1",
+    "methods"  : {
+        "public_timeline" : {
+            "path" : "/statuses/public_timeline.html",
+            "method" : "get",
+            "authentication": true
+        }
+    }
+}

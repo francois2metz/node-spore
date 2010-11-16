@@ -370,7 +370,6 @@ minitest.context("client with request middleware", function() {
             path: '/2/statuses/public_timeline.html',
         });
         var middleware = function(method, request, callback) {
-            assert.equal(request.scheme, 'https');
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
             callback();
         };
@@ -740,4 +739,31 @@ minitest.context("Client with spore shortcut", function() {
             test.finished();
         });
     });
+});
+
+minitest.context("Client with https", function () {
+    this.setup(function () {
+        this.client = spore.createClient(__dirname +'/fixtures/ssl.json');
+        this.mock = httpmock.init();
+        this.client.httpClient = this.mock.http;
+    });
+
+    this.assertion("port 443, scheme https, secure = true", function(test) {
+        this.mock.add({
+            port: 443,
+            secure: true,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline.html'
+        });
+        this.client.enable(function(method, request, next) {
+            assert.equal(request.port, 443);
+            assert.equal(request.scheme, 'https');
+            next();
+        });
+        this.client.public_timeline(function(err, response) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    })
 });

@@ -300,6 +300,8 @@ BSD
 
   Added AuthBasic and OAuth2 middlewares.
 
+  Fixed https support.
+
 * **0.0.2**
 
   Middlewares are no more object but a function.
