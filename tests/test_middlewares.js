@@ -10,6 +10,7 @@ var StatusMiddleware  = middlewares.status;
 var RuntimeMiddleware = middlewares.runtime;
 var BasicMiddleware   = middlewares.basic;
 var OAuth1Middleware  = middlewares.oauth1;
+var OAuth2Middleware  = middlewares.oauth2;
 
 var minitest = require("minitest");
 var assert   = require("assert");
@@ -137,6 +138,29 @@ minitest.context("oauth1 middleware", function () {
     this.assertion("don't add Authorization header", function(test) {
         var oauth = {};
         OAuth1Middleware(oauth, "token", "secret")({authentication: false}, this.request, function() {});
+        assert.equal(this.request.headers['Authorization'], undefined);
+        test.finished();
+    })
+});
+
+minitest.context("oauth2 middleware", function () {
+    this.setup(function() {
+        this.request = {
+            headers: {},
+            scheme: 'https',
+            host: 'example.net',
+            uri: '/plop'
+        };
+    });
+
+    this.assertion("add Authorization header", function(test) {
+        OAuth2Middleware("token")({authentication: true}, this.request, function() {});
+        assert.equal(this.request.headers['Authorization'], 'OAuth token');
+        test.finished();
+    })
+
+    this.assertion("don't add Authorization header", function(test) {
+        OAuth2Middleware("token")({authentication: false}, this.request, function() {});
         assert.equal(this.request.headers['Authorization'], undefined);
         test.finished();
     })

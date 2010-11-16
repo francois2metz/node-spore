@@ -192,11 +192,17 @@ HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrum
 
 #### OAuth1 Middleware
 
-Add oauth headers for each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
+Sign each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
 
                 var OAuth = require('oauth');
                 var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
                 var OAuthMiddleware = require('spore/middlewares').oauth1(oauth, access_token, access_token_secret);
+
+#### OAuth2 Middleware
+
+Sign each requests with authentication == true.
+
+                var oauth2 = require('spore/middlewares').oauth2(access_token);
 
 #### Status Middleware
 
@@ -292,7 +298,7 @@ BSD
 
   Added request.query_string.
 
-  Added AuthBasic middleware.
+  Added AuthBasic and OAuth2 middlewares.
 
 * **0.0.2**
 
