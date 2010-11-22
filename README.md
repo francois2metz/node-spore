@@ -257,7 +257,7 @@ See examples/.
 * deprecated : OK
 * headers : OK
 * unattended_params: OK
-* form-data: NOK
+* form-data: OK
 
 ## Compatibility
 

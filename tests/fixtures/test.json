@@ -85,6 +85,14 @@
             "required_params": ["format", "param1"],
             "path" : "/user.:format?foo=:param1",
             "method" : "GET"
+        },
+        "form_data": {
+            "path":  "/user/",
+            "method": "POST",
+            "required_params": ["param1"],
+            "form-data" : {
+                "foo" : ":param1"
+            }
         }
     }
 }

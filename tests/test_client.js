@@ -247,6 +247,20 @@ minitest.context("Create client with filename", function () {
             test.finished();
         });
     });
+
+    this.assertion("form data serialization", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/',
+            payload: 'foo=bar'
+        });
+        this.client.form_data({param1: 'bar'}, function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
 });
 
 minitest.context("Create client with json", function() {
