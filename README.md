@@ -208,19 +208,19 @@ Sign each requests with authentication == true.
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
 
-                var StatusMiddleware = require('spore/middlewares').status`
+                var StatusMiddleware = require('spore/middlewares').status()`
 
 #### FormatJson Middleware
 
 Parse JSON response if content-type is application/json.
 
-                var JsonMiddleware = require('spore/middlewares').json`
+                var JsonMiddleware = require('spore/middlewares').json()`
 
 #### Runtime middleware
 
 Add X-Spore-Runtime to the response headers. The value of the header is the time the request took to be executed.
 
-                var RuntimeMiddleware = require('spore/middlewares').runtime`
+                var RuntimeMiddleware = require('spore/middlewares').runtime()`
 
 ## Server
 
@@ -302,11 +302,13 @@ BSD
 
   Fixed https support.
 
+  Runtime, status and json middlewares are function. **incompatible change**
+
 * **0.0.2**
 
-  Middlewares are no more object but a function.
+  Middlewares are no more object but a function. **incompatible change**
 
-  Middlewares are also async. The third or second argument is a callback *next*.
+  Middlewares are also async. The third or second argument is a callback *next*. **incompatible change**
 
   Response middlewares can return a response object and break the chain.
 

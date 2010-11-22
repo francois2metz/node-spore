@@ -29,7 +29,7 @@ minitest.context("json middleware", function () {
     this.assertion("parse json if content type is application/json", function (test) {
         var response = this.response;
         response.headers['content-type'] = 'application/json; charset=utf-8';
-        this.middleware({}, {}, function(callback) {
+        this.middleware()({}, {}, function(callback) {
             callback(response, function() {
                 assert.equal(response.body.length, 1);
                 assert.equal(response.body[0].text, 'node-spore is awesome');
@@ -40,7 +40,7 @@ minitest.context("json middleware", function () {
 
     this.assertion("do nothing with other content type", function (test) {
         var response = this.response;
-        this.middleware({}, {}, function(callback) {
+        this.middleware()({}, {}, function(callback) {
             callback(response, function() {
                 assert.equal(response.body.length, 48);
                 test.finished();
@@ -63,7 +63,7 @@ minitest.context("status middleware", function () {
         this.response.status = 201;
         assert.throws(function () {
             test.finished();
-            that.middleware({
+            that.middleware()({
                 expected_status: [200, 500]
             }, {}, function(c) {c(that.response);});
         }, Error);
@@ -73,7 +73,7 @@ minitest.context("status middleware", function () {
         var that = this;
         this.response.status = 200;
         assert.doesNotThrow(function () {
-            that.middleware({
+            that.middleware()({
                 expected_status: [200, 500]
             }, {}, function(callback) {
                 callback(that.response, function() {
@@ -90,7 +90,7 @@ minitest.context("runtime middleware", function () {
             headers: {},
             body: ''
         };
-        RuntimeMiddleware({}, {}, function(callback) {
+        RuntimeMiddleware()({}, {}, function(callback) {
             callback(response, function() {
                 assert.equal(response.headers['X-Spore-Runtime'], 0);
                 test.finished();
