@@ -286,7 +286,7 @@ BSD
 
 ## Changelog
 
-* **0.0.3pre**
+* **0.0.3**
 
   Normalize HTTP verb to upper case.
 

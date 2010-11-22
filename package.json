@@ -1,5 +1,5 @@
-{ "version": "0.0.3pre"
-, "description": "Work in progress implementation of spore in node."
+{ "version": "0.0.3"
+, "description": "Implementation of spore in node."
 , "repository": { "type": "git"
                  , "url": "http://github.com/francois2metz/node-spore.git"
                 }
