@@ -192,7 +192,7 @@ HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrum
 
 #### OAuth1 Middleware
 
-Sign each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/) with [patches](https://github.com/francois2metz/node-oauth).
+Sign each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/).
 
                 var OAuth = require('oauth');
                 var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
