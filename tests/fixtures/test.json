@@ -1,5 +1,5 @@
 {
-    "base_url" : "http://api.twitter.com/1",
+    "base_url" : "http://api.twitter.com/1/",
     "version"  : "0.1",
     "methods"  : {
         "public_timeline" : {
