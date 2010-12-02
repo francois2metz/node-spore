@@ -268,7 +268,7 @@ See examples/.
 
 ## Compatibility
 
-Tested with node 0.2.3, 0.2.4 and 0.3.0.
+Tested with node 0.2.5 and 0.3.0.
 
 ## TODO
 
