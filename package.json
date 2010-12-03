@@ -1,4 +1,4 @@
-{ "version": "0.0.3"
+{ "version": "0.1.0pre"
 , "description": "Implementation of spore in node."
 , "repository": { "type": "git"
                  , "url": "http://github.com/francois2metz/node-spore.git"

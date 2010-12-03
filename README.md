@@ -287,6 +287,10 @@ BSD
 
 ## Changelog
 
+* **0.1.0pre**
+
+  Initial server support with express.
+
 * **0.0.3**
 
   Normalize HTTP verb to upper case.
