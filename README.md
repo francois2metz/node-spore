@@ -24,9 +24,15 @@ With a json string:
 
         spore.createClient('{"base_url": ...}');
 
-Or with a file:
+With a file:
 
         var client = spore.createClient(__dirname +'/twitter.json');
+
+With an url:
+
+        spore.createClientWithUrl('http://example.net/spore.json', function(err, client) {
+            // do something with client
+        });
 
 You can create client with multiple spec:
 
@@ -273,7 +279,6 @@ Tested with node 0.2.5 and 0.3.0.
 
 ## TODO
 
-* Construct with url
 * Write example with a twitter client (or statusnet :))
 * Server implementation
 

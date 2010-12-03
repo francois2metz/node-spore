@@ -9,6 +9,8 @@ var spore = require('spore');
 var minitest = require("minitest");
 var assert   = require("assert");
 var httpmock = require("./mock_http_request");
+var http     = require("http");
+var fs       = require("fs");
 
 minitest.setupListeners();
 
@@ -749,4 +751,27 @@ minitest.context("Client with https", function () {
             test.finished();
         });
     })
+});
+
+
+minitest.context("Create client from url", function () {
+    this.assertion("should have a public timeline method", function (test) {
+        fs.readFile(__dirname +'/fixtures/test.json', function(err, data) {
+            assert.equal(err, null);
+            var server = http.createServer(function(req, res) {
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.end(data);
+            });
+            server.listen(5678, function() {
+                spore.createClientWithUrl('http://localhost:5678/test.json',
+                                          function(err, client) {
+                                              server.close();
+                                              assert.equal(err, null);
+                                              assert.ok(client.public_timeline),
+                                              test.finished();
+                                          });
+            });
+        });
+    });
+
 });
