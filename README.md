@@ -294,7 +294,9 @@ BSD
 
 * **0.1.0pre**
 
-  Initial server support with express.
+  Initial server support with express. Feedback is welcome.
+
+  Construct client with an url.
 
 * **0.0.3**
 
