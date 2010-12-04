@@ -677,52 +677,26 @@ minitest.context("middlewares", function() {
 });
 
 minitest.context("Client with spore shortcut", function() {
-    function createClient(middleware, mock) {
-        var client = spore.createClient(middleware, __dirname +'/fixtures/authentication.json');
-        client.httpClient = mock.http;
-        return client
-    };
+    this.setup(function() {
+        this.client = spore.createClient(__dirname +'/fixtures/authentication.json');
+    });
 
     this.assertion("method inherits: authentication, formats, expected_status, unattended_params", function(test) {
-        var mock = httpmock.init();
-        mock.add({
-            port: 80,
-            host: 'api.twitter.com',
-            method: 'POST',
-            path: '/1/user/:id'
-        });
-        var middleware = function(method, request, callback) {
-            assert.ok(method.authentication);
-            assert.ok(method.unattended_params);
-            assert.deepEqual(method.formats, ["json", "html"]);
-            assert.deepEqual(method.expected_status, [200, 500]);
-            callback();
-        };
-        createClient(middleware, mock).update_user(function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
+        var method = this.client.spec.methods.update_user;
+        assert.ok(method.authentication);
+        assert.ok(method.unattended_params);
+        assert.deepEqual(method.formats, ["json", "html"]);
+        assert.deepEqual(method.expected_status, [200, 500]);
+        test.finished();
     });
 
     this.assertion("method override: authentication, formats, expected_status, unattended_params", function(test) {
-        var mock = httpmock.init();
-        mock.add({
-            port: 80,
-            host: 'api.twitter.com',
-            method: 'GET',
-            path: '/1/statuses/public_timeline'
-        });
-        var middleware = function(method, request, callback) {
-            assert.strictEqual(method.authentication, false);
-            assert.strictEqual(method.unattended_params, false);
-            assert.deepEqual(method.formats, ["xml"]);
-            assert.deepEqual(method.expected_status, [200, 204, 503]);
-            callback();
-        };
-        createClient(middleware, mock).public_timeline(function(err, result) {
-            assert.equal(err, null);
-            test.finished();
-        });
+        var method = this.client.spec.methods.public_timeline;
+        assert.strictEqual(method.authentication, false);
+        assert.strictEqual(method.unattended_params, false);
+        assert.deepEqual(method.formats, ["xml"]);
+        assert.deepEqual(method.expected_status, [200, 204, 503]);
+        test.finished();
     });
 });
 
