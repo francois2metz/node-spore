@@ -190,13 +190,13 @@ Interrupt response middlewares by return response:
                 });
             }
 
-#### AuthBasic Middleware
+#### AuthBasic middleware
 
 HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrumins/node-base64).
 
                 var AuthBasic = require('spore/middlewares').basic(username, password);
 
-#### OAuth1 Middleware
+#### OAuth1 middleware
 
 Sign each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/).
 
@@ -204,19 +204,19 @@ Sign each requests with authentication == true. Require [node-oauth](https://git
                 var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
                 var OAuthMiddleware = require('spore/middlewares').oauth1(oauth, access_token, access_token_secret);
 
-#### OAuth2 Middleware
+#### OAuth2 middleware
 
 Sign each requests with authentication == true.
 
                 var oauth2 = require('spore/middlewares').oauth2(access_token);
 
-#### Status Middleware
+#### Status middleware
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
 
                 var StatusMiddleware = require('spore/middlewares').status()`
 
-#### FormatJson Middleware
+#### FormatJson middleware
 
 Parse JSON response if content-type is application/json.
 
