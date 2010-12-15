@@ -277,11 +277,6 @@ See examples/.
 
 Tested with node 0.2.5 and 0.3.0.
 
-## TODO
-
-* Write example with a twitter client (or statusnet :))
-* Server implementation
-
 ## Links
 
 * [Spore specification](https://github.com/SPORE/specifications)
