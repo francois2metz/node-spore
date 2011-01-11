@@ -428,6 +428,16 @@ minitest.context("client with request middleware", function() {
             test.finished();
         });
     });
+
+    this.assertion("can call next with error", function(test) {
+        var middleware = function(method, request, callback) {
+            callback(new Error('big exception here'));
+        };
+        createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
+            assert.equal(err.message, 'big exception here');
+            test.finished();
+        });
+    });
 });
 
 minitest.context("client with response middleware", function() {
