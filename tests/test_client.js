@@ -545,6 +545,19 @@ minitest.context("client with response middleware", function() {
             test.finished();
         });
     });
+
+    this.assertion("can call next with error", function(test) {
+        var middleware = function(method, request, callback) {
+            callback(function(response, callback) {
+                callback(new Error('big exception here'));
+            });
+        };
+        setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
+            assert.equal(err.message, 'big exception here');
+            assert.notEqual(result, null);
+            test.finished();
+        });
+    });
 });
 
 minitest.context("middlewares", function() {
