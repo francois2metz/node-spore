@@ -325,7 +325,7 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/1/statuses/public_timeline.html',
         });
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             called++;
             assert.ok(method.authentication);
             assert.deepEqual(request.headers, {host: 'api.twitter.com'});
@@ -337,7 +337,7 @@ minitest.context("client with request middleware", function() {
             assert.equal(request.method, 'GET');
             assert.equal(request.path_info, '/1/statuses/public_timeline.:format');
             assert.equal(request.uri, '/1/statuses/public_timeline.html');
-            callback();
+            next();
         };
         createClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
             assert.equal(called, 1);
@@ -354,9 +354,9 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/2/statuses/public_timeline.html',
         });
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             request.headers['Accept'] = 'text/html,*/*;q=0.8';
-            callback();
+            next();
         };
         createClient(middleware, this.mock).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -371,10 +371,10 @@ minitest.context("client with request middleware", function() {
             method: 'GET',
             path: '/3/statuses/public.json',
         });
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             request.path_info = '/3/statuses/public.:format';
             request.params.format = 'json';
-            callback();
+            next();
         };
         createClient(middleware, this.mock).public_timeline2({format: 'html'}, function(err, result) {
             assert.equal(err, null);
@@ -390,9 +390,9 @@ minitest.context("client with request middleware", function() {
             path: '/1/user/42',
             payload: 'plop'
         });
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             request.payload = 'plop';
-            callback();
+            next();
         };
         createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err, null);
@@ -401,8 +401,8 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("can shortcut request by return a response object", function(test) {
-        var middleware = function(method, request, callback) {
-            callback({
+        var middleware = function(method, request, next) {
+            next({
                 status: 400,
                 headers: {'Server': 'apache'},
                 body: 'plip'
@@ -420,7 +420,7 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("can throw exception", function(test) {
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             throw new Error('big exception here');
         };
         createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
@@ -430,8 +430,8 @@ minitest.context("client with request middleware", function() {
     });
 
     this.assertion("can call next with error", function(test) {
-        var middleware = function(method, request, callback) {
-            callback(new Error('big exception here'));
+        var middleware = function(method, request, next) {
+            next(new Error('big exception here'));
         };
         createClient(middleware, this.mock).update_user({id: '42'}, 'plip', function(err, result) {
             assert.equal(err.message, 'big exception here');
@@ -463,14 +463,14 @@ minitest.context("client with response middleware", function() {
 
     this.assertion("should have a response param", function(test) {
         var called = 0;
-        var middleware = function(method, request, callback) {
-            callback(function(response, callback) {
+        var middleware = function(method, request, next) {
+            next(function(response, next) {
                 called++;
                 assert.equal(response.status, 200);
                 assert.deepEqual(response.headers, {'Content-Type': 'text/html',
                                                     'Server' : 'node'});
                 assert.equal(response.body, 'plop');
-                callback();
+                next();
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -481,11 +481,11 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("response status and headers transform", function(test) {
-        var middleware = function(method, request, callback) {
-            callback(function(response, callback) {
+        var middleware = function(method, request, next) {
+            next(function(response, next) {
                 response.headers.Server = 'nginx';
                 response.status = 201;
-                callback();
+                next();
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -497,10 +497,10 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("response body transform", function(test) {
-        var middleware = function(method, request, callback) {
-            callback(function(response, callback) {
+        var middleware = function(method, request, next) {
+            next(function(response, next) {
                 response.headers.Server = 'nginx';
-                callback();
+                next();
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -513,13 +513,13 @@ minitest.context("client with response middleware", function() {
     this.assertion("can shortcut response", function(test) {
         var mock_response = {status: 200, headers: {}, body: 'plop'};
         var called = 0;
-        var middleware1 = function(method, request, callback) {
-            callback(function(response, callback) {
-                callback(mock_response);
+        var middleware1 = function(method, request, next) {
+            next(function(response, next) {
+                next(mock_response);
             });
         };
-        var middleware2 = function(method, request, callback) {
-            callback(function(response) {
+        var middleware2 = function(method, request, next) {
+            next(function(response) {
                 called++;
             });
         };
@@ -534,8 +534,8 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("can throw exception", function(test) {
-        var middleware = function(method, request, callback) {
-            callback(function(response, callback) {
+        var middleware = function(method, request, next) {
+            next(function(response, next) {
                 throw new Error('big exception here');
             });
         };
@@ -547,9 +547,9 @@ minitest.context("client with response middleware", function() {
     });
 
     this.assertion("can call next with error", function(test) {
-        var middleware = function(method, request, callback) {
-            callback(function(response, callback) {
-                callback(new Error('big exception here'));
+        var middleware = function(method, request, next) {
+            next(function(response, next) {
+                next(new Error('big exception here'));
             });
         };
         setupClient(middleware, this.mock).public_timeline({format: 'html'}, function(err, result) {
@@ -577,9 +577,9 @@ minitest.context("middlewares", function() {
     this.assertion("cannot modify method object", function(test) {
         var mock = httpmock.init();
         addHttpRequest(mock);
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             assert.ok(Object.isFrozen(method));
-            callback();
+            next();
         };
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
         client.httpClient = mock.http;
@@ -593,9 +593,9 @@ minitest.context("middlewares", function() {
         var mock = httpmock.init();
         addHttpRequest(mock);
         var called = 0;
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             called++;
-            callback();
+            next();
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable(middleware);
@@ -612,13 +612,13 @@ minitest.context("middlewares", function() {
         addHttpRequest(mock);
         var called_1 = 0;
         var called_2 = 0;
-        var middleware1 = function(method, request, callback) {
+        var middleware1 = function(method, request, next) {
             called_1++;
-            callback();
+            next();
         };
-        var middleware2 = function(method, request, callback) {
+        var middleware2 = function(method, request, next) {
             called_2++;
-            callback();
+            next();
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable(middleware1);
@@ -637,9 +637,9 @@ minitest.context("middlewares", function() {
         var mock = httpmock.init();
         addHttpRequest(mock);
         var called = 0;
-        var middleware = function(method, request, callback) {
+        var middleware = function(method, request, next) {
             called++;
-            callback();
+            next();
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable_if(function(method, request) {
@@ -658,18 +658,18 @@ minitest.context("middlewares", function() {
         var mock = httpmock.init();
         var request  = [];
         var response = [];
-        var middleware1  = function(method, r, callback) {
+        var middleware1  = function(method, r, next) {
             request.push(1);
-            callback(function(r, callback) {
+            next(function(r, next) {
                 response.push(1);
-                callback();
+                next();
             });
         };
-        var middleware2 = function(method, r, callback) {
+        var middleware2 = function(method, r, next) {
             request.push(2);
-            callback(function(r, callback) {
+            next(function(r, next) {
                 response.push(2);
-                callback();
+                next();
             });
         };
         var client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
