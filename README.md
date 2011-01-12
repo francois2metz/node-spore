@@ -293,6 +293,10 @@ BSD
 
   Construct client with an url.
 
+  Middlewares can now call next with an error.
+
+  Some internal refactoring.
+
 * **0.0.3**
 
   Normalize HTTP verb to upper case.
