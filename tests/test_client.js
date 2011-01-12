@@ -6,11 +6,12 @@ require.paths.unshift(__dirname +"/../lib");
 // we test that
 var spore = require('spore');
 
-var minitest = require("minitest");
-var assert   = require("assert");
-var httpmock = require("./mock_http_request");
-var http     = require("http");
-var fs       = require("fs");
+var minitest = require("minitest")
+,   assert   = require("assert")
+,   httpmock = require("./mock_http_request")
+,   http     = require("http")
+,   fs       = require("fs")
+;
 
 minitest.setupListeners();
 

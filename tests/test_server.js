@@ -5,11 +5,11 @@ require.paths.unshift(__dirname +"/../lib");
 
 var spore = require('spore');
 
-var minitest = require("minitest");
-var assert   = require("assert");
-var express  = require("express");
-var http     = require("http");
-var sys      = require("sys");
+var minitest = require("minitest")
+,   assert   = require("assert")
+,   express  = require("express")
+,   http     = require("http")
+,   sys      = require("sys");
 
 var port = 5555;
 

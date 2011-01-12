@@ -12,8 +12,9 @@ var BasicMiddleware   = middlewares.basic;
 var OAuth1Middleware  = middlewares.oauth1;
 var OAuth2Middleware  = middlewares.oauth2;
 
-var minitest = require("minitest");
-var assert   = require("assert");
+var minitest = require("minitest")
+,   assert   = require("assert")
+;
 
 minitest.setupListeners();
 
