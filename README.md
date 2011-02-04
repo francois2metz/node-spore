@@ -10,7 +10,7 @@ node-spore is an implementation of [Spore](https://github.com/SPORE/specificatio
 
 `spore.createClient(spore_spec)`
 
-You can contruct client with object:
+You can contruct a client with object:
 
         var spore = require('spore');
         spore.createClient({
@@ -34,7 +34,7 @@ With an url:
             // do something with client
         });
 
-You can create client with multiple spec:
+You can create a client with multiple spec:
 
         var client = spore.createClient(__dirname +'/twitter1.json',
                                         __dirname +'/twitter2.json');
@@ -43,8 +43,8 @@ You can create client with multiple spec:
 
 `client.method_name([params, ][payload, ]callback)`
 
-* params: hash with key/value (optionnal)
-* payload: content of the request (optionnal)
+* params: hash with key/value (optional)
+* payload: content of the request (optional)
 * callback: function with 2 parameters, err (a string) and result (see *Response object*)
 
 If a required parameter is not defined, callback is immediatly called with err !== null.
@@ -70,7 +70,7 @@ Middleware in spore-node are inspired from [connect](http://github.com/senchalab
 
 With middleware you can handle authentication, special body serialization or some special case. Because in real life, most API sucks.
 
-Middleware is a function. Middleware should call *next*, with null (and next middleware will be called), a response (no more middleware will be called and request is abort) or a callback (will be called after response received).
+Middleware is a function. Middleware should call *next*, with null (and next middleware will be called), a response (no more middleware will be called and request is abort), a callback (will be called after response received), or an error.
 
         var middleware = function(method, request, next) {
             if (method.authentication) {
@@ -87,7 +87,7 @@ You can many middlewares:
 
         spore.createClient(middleware1, middleware2, __dirname +'/twitter.json');
 
-If a middleware throw exception, then the callback is immediatly called, and err param contain exception.
+If a middleware throw an exception, then the callback is immediatly called, and err param contain exception.
 
 You can also enable middleware with client::enable
 
@@ -110,9 +110,9 @@ Or disable a middleware:
 
 #### Method object
 
-Method represent current method in spore description file.
+Method represent the current method in spore description file.
 
-If api required authentication for all methods and a method specify ''authentication'' to false, method.authentication is false.
+If API required authentication for all methods and a method specify ''authentication'' to false, method.authentication is false.
 
 Same for formats and expected_status.
 
