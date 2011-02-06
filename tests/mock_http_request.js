@@ -65,16 +65,26 @@ function _request(request, options, callback) {
 }
 
 exports.init = function() {
-    var mocks = [];
+    var httpmocks = [];
+    var httpsmocks = [];
     return {
         http : {
             request: function(options, callback) {
-                var request = mocks.shift();
+                var request = httpmocks.shift();
+                return _request(request, options, callback);
+            }
+        },
+        https: {
+            request: function(options, callback) {
+                var request = httpsmocks.shift();
                 return _request(request, options, callback);
             }
         },
         add: function(mock) {
-            mocks.push(mock);
+            httpmocks.push(mock);
+        },
+        adds: function(mock) {
+            httpsmocks.push(mock);
         }
     };
 };

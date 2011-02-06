@@ -19,7 +19,7 @@ minitest.context("Create client with filename", function () {
     this.setup(function () {
         this.client = spore.createClient(__dirname +'/fixtures/test.json');
         this.mock   = httpmock.init();
-        this.client.httpClient = this.mock.http;
+        this.client.httpClient = this.mock;
     });
 
     this.assertion("should have a public_timeline method", function (test) {
@@ -314,7 +314,7 @@ minitest.context("client with request middleware", function() {
 
     function createClient(middleware, mock) {
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = mock.http;
+        client.httpClient = mock;
         return client;
     }
 
@@ -448,7 +448,7 @@ minitest.context("client with response middleware", function() {
 
     function setupClient(middleware, mock) {
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = mock.http;
+        client.httpClient = mock;
         mock.add({
             port: 80,
             host: 'api.twitter.com',
@@ -583,7 +583,7 @@ minitest.context("middlewares", function() {
             next();
         };
         var client = spore.createClient(middleware, __dirname +'/fixtures/test.json');
-        client.httpClient = mock.http;
+        client.httpClient = mock;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             test.finished();
@@ -600,7 +600,7 @@ minitest.context("middlewares", function() {
         };
         var client = spore.createClient(__dirname +'/fixtures/test.json');
         client.enable(middleware);
-        client.httpClient = mock.http;
+        client.httpClient = mock;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 1);
@@ -625,7 +625,7 @@ minitest.context("middlewares", function() {
         client.enable(middleware1);
         client.enable(middleware2);
         client.disable(middleware1);
-        client.httpClient = mock.http;
+        client.httpClient = mock;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called_1, 0);
@@ -647,7 +647,7 @@ minitest.context("middlewares", function() {
             called++;
             return true;
         }, middleware);
-        client.httpClient = mock.http;
+        client.httpClient = mock;
         client.public_timeline({format: 'html'}, function(err, result) {
             assert.equal(err, null);
             assert.equal(called, 2);
@@ -674,7 +674,7 @@ minitest.context("middlewares", function() {
             });
         };
         var client = spore.createClient(middleware1, middleware2, __dirname +'/fixtures/test.json');
-        client.httpClient = mock.http;
+        client.httpClient = mock;
 
         addHttpRequest(mock);
         mock.add({
@@ -728,13 +728,12 @@ minitest.context("Client with https", function () {
     this.setup(function () {
         this.client = spore.createClient(__dirname +'/fixtures/ssl.json');
         this.mock = httpmock.init();
-        this.client.httpClient = this.mock.http;
+        this.client.httpClient = this.mock;
     });
 
     this.assertion("port 443, scheme https, secure = true", function(test) {
-        this.mock.add({
+        this.mock.adds({
             port: 443,
-            secure: true,
             host: 'api.twitter.com',
             method: 'GET',
             path: '/1/statuses/public_timeline.html'
