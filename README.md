@@ -2,6 +2,8 @@
 
 node-spore is an implementation of [Spore](https://github.com/SPORE/specifications) in [Node](http://nodejs.org/).
 
+It provide a generic ReST client and server.
+
 ## Install
 
 `npm install spore`
@@ -118,16 +120,16 @@ Same for formats and expected_status.
 
 #### Request object
 
-* port : server port (80, 443, ...)
-* host : host (example.com)
-* scheme : scheme or the url (http, https)
-* method : http method (GET, POST, ...)
-* path_info : request uri with placeholder (/1/example/:id)
-* uri :  *readonly* request uri without placehoder (/1/example/42)
-* query_string : query string as key/value (empty, except path have a query string)
-* headers : http request headers as keys/values({'User-Agent': 'node-spore', 'Cookie': '...'})
-* params : request params as keys/values ({id: 42})
-* payload : payload
+* port: server port (80, 443, ...)
+* host: host (example.com)
+* scheme: scheme or the url (http, https)
+* method: http method (GET, POST, ...)
+* path_info: request uri with placeholder (/1/example/:id)
+* uri: *readonly* request uri without placehoder (/1/example/42)
+* query_string: query string as key/value (empty, except path have a query string)
+* headers: http request headers as keys/values({'User-Agent': 'node-spore', 'Cookie': '...'})
+* params: request params as keys/values ({id: 42})
+* payload: payload
 
 #### Response object
 
@@ -254,28 +256,30 @@ See examples/.
 
 ### API
 
-* base_url : OK
-* authentication : OK (via middleware)
-* expected_status : OK (via middleware)
+* base_url: OK
+* authentication: OK (via middleware)
+* expected_status: OK (via middleware)
 
 ### Methods
 
-* method : OK
-* path : OK
-* optional_params : OK
-* required_params : OK
-* expected_status : OK (via middleware)
-* authentication : OK (via middleware)
-* base_url : OK
+* method: OK
+* path: OK
+* optional_params: OK
+* required_params: OK
+* expected_status: OK (via middleware)
+* authentication: OK (via middleware)
+* base_url: OK
 * required_payload: OK
-* deprecated : OK
-* headers : OK
+* deprecated: OK
+* headers: OK
 * unattended_params: OK
 * form-data: NOK
 
 ## Compatibility
 
-Tested with node 0.2.5 and 0.3.0.
+0.1.x run on node 0.3.7.
+
+0.0.3 run on node 0.2.x.
 
 ## Links
 
@@ -296,6 +300,8 @@ BSD
   Middlewares can now call next with an error.
 
   Some internal refactoring.
+
+  Now work on node 0.3.7. Support of node 0.2.x have been dropped.
 
 * **0.0.3**
 
