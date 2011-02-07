@@ -293,7 +293,7 @@ BSD
 
 * **0.1.0pre**
 
-  Initial server support with express. Feedback is welcome.
+  Initial server support with connect. Feedback is welcome.
 
   Construct client with an url.
 
