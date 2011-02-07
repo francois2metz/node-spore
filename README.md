@@ -232,15 +232,15 @@ Add X-Spore-Runtime to the response headers. The value of the header is the time
 
 ## Server
 
-Create server with [express](http://github.com/visionmedia/express).
+[Connect](http://github.com/senchalabs/connect) middleware:
 
-        var app   = require('express').createServer();
         var spore = require('spore');
-        spore.createServer(app, __dirname +'/twitter.json', {
+        var middleware = spore.middleware(__dirname +'/twitter.json', {
             public_timeline: function(req, res) {
                 res.send('Hello word !');
             }
         });
+        var app = require(connect').createServer(middleware);
         app.listen(3000);
 
 ## Tests
