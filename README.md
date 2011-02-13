@@ -291,7 +291,7 @@ BSD
 
 ## Changelog
 
-* **0.1.0pre**
+* **0.1.0**
 
   Initial server support with connect. Feedback is welcome.
 
@@ -301,7 +301,7 @@ BSD
 
   Some internal refactoring.
 
-  Now work on node 0.3.7. Support of node 0.2.x have been dropped.
+  Now work on node 0.4. Support of node 0.2.x have been dropped.
 
 * **0.0.3**
 

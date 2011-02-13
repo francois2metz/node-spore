@@ -1,10 +1,10 @@
-{ "version": "0.1.0pre"
-, "description": "Implementation of spore in node."
+{ "name": "spore"
+, "description": "Generic ReST client and server. Implementation of spore in node."
+, "version": "0.1.0"
 , "repository": { "type": "git"
                  , "url": "http://github.com/francois2metz/node-spore.git"
                 }
 , "directories": { "lib": "./lib" }
 , "author": "François de Metz <francois@2metz.fr>"
 , "licenses": [{ "type": "BSD"}]
-, "name": "spore"
 }
