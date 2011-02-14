@@ -196,7 +196,7 @@ Interrupt response middlewares by return response:
 
 HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrumins/node-base64).
 
-                var AuthBasic = require('spore/middlewares').basic(username, password);
+                var AuthBasic = require('spore').middlewares.basic(username, password);
 
 #### OAuth1 middleware
 
@@ -204,31 +204,31 @@ Sign each requests with authentication == true. Require [node-oauth](https://git
 
                 var OAuth = require('oauth');
                 var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
-                var OAuthMiddleware = require('spore/middlewares').oauth1(oauth, access_token, access_token_secret);
+                var OAuthMiddleware = require('spore').middlewares.oauth1(oauth, access_token, access_token_secret);
 
 #### OAuth2 middleware
 
 Sign each requests with authentication == true.
 
-                var oauth2 = require('spore/middlewares').oauth2(access_token);
+                var oauth2 = require('spore').middlewares.oauth2(access_token);
 
 #### Status middleware
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
 
-                var StatusMiddleware = require('spore/middlewares').status()`
+                var StatusMiddleware = require('spore').middlewares.status()`
 
 #### FormatJson middleware
 
 Parse JSON response if content-type is application/json.
 
-                var JsonMiddleware = require('spore/middlewares').json()`
+                var JsonMiddleware = require('spore').middlewares.json()`
 
 #### Runtime middleware
 
 Add X-Spore-Runtime to the response headers. The value of the header is the time the request took to be executed.
 
-                var RuntimeMiddleware = require('spore/middlewares').runtime()`
+                var RuntimeMiddleware = require('spore').middlewares.runtime()`
 
 ## Server
 
@@ -240,7 +240,7 @@ Add X-Spore-Runtime to the response headers. The value of the header is the time
                 res.send('Hello word !');
             }
         });
-        var app = require(connect').createServer(middleware);
+        var app = require('connect').createServer(middleware);
         app.listen(3000);
 
 ## Tests
@@ -290,6 +290,14 @@ See examples/.
 BSD
 
 ## Changelog
+
+* **0.1.1**
+
+  Fix npm publish.
+
+  No more include tests/* in npm package.
+
+  You should use require('spore').middlewares for using build-in middlewares.
 
 * **0.1.0**
 
