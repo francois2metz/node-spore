@@ -14,32 +14,32 @@ It provide a generic ReST client and server.
 
 You can contruct a client with object:
 
-        var spore = require('spore');
-        spore.createClient({
-                        "base_url" : "http://api.twitter.com/1",
-                        "version" : "0.1",
-                        "methods" : {
-                        ....
-        }});
+    var spore = require('spore');
+    spore.createClient({
+                    "base_url" : "http://api.twitter.com/1",
+                    "version" : "0.1",
+                    "methods" : {
+                    ....
+    }});
 
 With a json string:
 
-        spore.createClient('{"base_url": ...}');
+    spore.createClient('{"base_url": ...}');
 
 With a file:
 
-        var client = spore.createClient(__dirname +'/twitter.json');
+    var client = spore.createClient(__dirname +'/twitter.json');
 
 With an url:
 
-        spore.createClientWithUrl('http://example.net/spore.json', function(err, client) {
-            // do something with client
-        });
+    spore.createClientWithUrl('http://example.net/spore.json', function(err, client) {
+        // do something with client
+    });
 
 You can create a client with multiple spec:
 
-        var client = spore.createClient(__dirname +'/twitter1.json',
-                                        __dirname +'/twitter2.json');
+    var client = spore.createClient(__dirname +'/twitter1.json',
+                                    __dirname +'/twitter2.json');
 
 ### Usage
 
@@ -57,22 +57,22 @@ Method with payload:
 
 Example:
 
-        client.method_name({id: 42}, 'payload', function(err, result) {
-           ...
-        });
+    client.method_name({id: 42}, 'payload', function(err, result) {
+        ...
+    });
 
 Method without params:
 
-        client.method_name(callback)
-        client.method_name(payload, callback)
+    client.method_name(callback)
+    client.method_name(payload, callback)
 
 #### Misc.
 
 If you just want to perform a *GET* request, use `client.get(url, callback)`:
 
-        client.get('http://example.com/me', function(err, result) {
+    client.get('http://example.com/me', function(err, result) {
 
-        });
+    });
 
 ### Middlewares
 
@@ -82,41 +82,41 @@ With middleware you can handle authentication, special body serialization or som
 
 Middleware is a function. Middleware should call *next*, with null (and next middleware will be called), a response (no more middleware will be called and request is abort), a callback (will be called after response received), or an error.
 
-        var middleware = function(method, request, next) {
-            if (method.authentication) {
-                request.headers['accept'] = 'text/html';
-            }
-            next(function(response, next) {
-                response.status = 500;
-                next();
-            });
-        };
-        spore.createClient(middleware, __dirname +'/twitter.json');
+    var middleware = function(method, request, next) {
+        if (method.authentication) {
+            request.headers['accept'] = 'text/html';
+        }
+        next(function(response, next) {
+            response.status = 500;
+            next();
+        });
+    };
+    spore.createClient(middleware, __dirname +'/twitter.json');
 
 You can many middlewares:
 
-        spore.createClient(middleware1, middleware2, __dirname +'/twitter.json');
+    spore.createClient(middleware1, middleware2, __dirname +'/twitter.json');
 
 If a middleware throw an exception, then the callback is immediatly called, and err param contain exception.
 
 You can also enable middleware with client::enable
 
-        var client = spore.createClient(__dirname +'/twitter.json');
-        client.enable(middleware);
+    var client = spore.createClient(__dirname +'/twitter.json');
+    client.enable(middleware);
 
 Or enable enable middleware only if:
 
-        var client = spore.createClient(__dirname +'/twitter.json');
-        client.enable_if(function(method, request) {
-            if (!method.authentication) {
-                return false;
-            }
-            return true;
-        }, middleware);
+    var client = spore.createClient(__dirname +'/twitter.json');
+    client.enable_if(function(method, request) {
+        if (!method.authentication) {
+            return false;
+        }
+        return true;
+    }, middleware);
 
 Or disable a middleware:
 
-        client.disable(middleware);
+    client.disable(middleware);
 
 #### Method object
 
@@ -149,112 +149,112 @@ Same for formats and expected_status.
 
 Adding http headers:
 
-            function(method, request, next) {
-                request.headers['Content-Length'] = 42;
-                next();
-            }
+    function(method, request, next) {
+        request.headers['Content-Length'] = 42;
+        next();
+    }
 
 Modify params:
 
-            function(method, request, next) {
-                request.params.id = 'myid';
-                next();
-            }
+    function(method, request, next) {
+        request.params.id = 'myid';
+        next();
+    }
 
 Return response:
 
-            function(method, request, next) {
-                next({
-                    status   : 200,
-                    headers : {},
-                    body    : ''
-                });
-            }
+    function(method, request, next) {
+        next({
+           status   : 200,
+           headers : {},
+           body    : ''
+        });
+    }
 
 #### Modify response
 
 Adding http headers:
 
-            function(method, request, next) {
-                next(function(response, next) {
-                    response.headers['Content-type'] = 'text/html';
-                    next();
-                });
-            }
+    function(method, request, next) {
+        next(function(response, next) {
+            response.headers['Content-type'] = 'text/html';
+            next();
+        });
+    }
 
 Transform body:
 
-            function(method, request, next {
-                next(function(response, next) {
-                    response.data = JSON.parse(response.data);
-                    next();
-                });
-            }
+    function(method, request, next {
+        next(function(response, next) {
+            response.data = JSON.parse(response.data);
+            next();
+        });
+    }
 
 Interrupt response middlewares by return response:
 
-            function(method, request, callback) {
-                next(function(response, next) {
-                    response.headers['Content-type'] = 'text/html';
-                    next(response);
-                });
-            }
+    function(method, request, callback) {
+        next(function(response, next) {
+            response.headers['Content-type'] = 'text/html';
+            next(response);
+        });
+    }
 
 #### AuthBasic middleware
 
 HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrumins/node-base64).
 
-                var AuthBasic = require('spore').middlewares.basic(username, password);
+    var AuthBasic = require('spore').middlewares.basic(username, password);
 
 #### OAuth1 middleware
 
 Sign each requests with authentication == true. Require [node-oauth](https://github.com/ciaranj/node-oauth/).
 
-                var OAuth = require('oauth');
-                var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
-                var OAuthMiddleware = require('spore').middlewares.oauth1(oauth, access_token, access_token_secret);
+    var OAuth = require('oauth');
+    var oauth = new OAuth(requestUrl, accessUrl, consumerKey, consumerSecret, version, null, "HMAC-SHA1");
+    var OAuthMiddleware = require('spore').middlewares.oauth1(oauth, access_token, access_token_secret);
 
 #### OAuth2 middleware
 
 Sign each requests with authentication == true.
 
-                var oauth2 = require('spore').middlewares.oauth2(access_token);
+    var oauth2 = require('spore').middlewares.oauth2(access_token);
 
 #### Status middleware
 
 Check if response code match expected_status in spec. Throw exception if status is not expected.
 
-                var StatusMiddleware = require('spore').middlewares.status()`
+    var StatusMiddleware = require('spore').middlewares.status()`
 
 #### FormatJson middleware
 
 Parse JSON response if content-type is application/json.
 
-                var JsonMiddleware = require('spore').middlewares.json()`
+    var JsonMiddleware = require('spore').middlewares.json()`
 
 #### Runtime middleware
 
 Add X-Spore-Runtime to the response headers. The value of the header is the time the request took to be executed.
 
-                var RuntimeMiddleware = require('spore').middlewares.runtime()`
+    var RuntimeMiddleware = require('spore').middlewares.runtime()`
 
 ## Server
 
 [Connect](http://github.com/senchalabs/connect) middleware:
 
-        var spore = require('spore');
-        var middleware = spore.middleware(__dirname +'/twitter.json', {
-            public_timeline: function(req, res) {
-                res.send('Hello word !');
-            }
-        });
-        var app = require('connect').createServer(middleware);
-        app.listen(3000);
+    var spore = require('spore');
+    var middleware = spore.middleware(__dirname +'/twitter.json', {
+        public_timeline: function(req, res) {
+            res.send('Hello word !');
+        }
+    });
+    var app = require('connect').createServer(middleware);
+    app.listen(3000);
 
 ## Tests
 
-        $> git submodule update --init
-        $> make test
+    $> git submodule update --init
+    $> make test
 
 ## Examples
 
@@ -298,6 +298,10 @@ See examples/.
 BSD
 
 ## Changelog
+
+* **0.2.0pre**
+
+  Add client.get(url, callback)
 
 * **0.1.1**
 
