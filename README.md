@@ -66,6 +66,14 @@ Method without params:
         client.method_name(callback)
         client.method_name(payload, callback)
 
+#### Misc.
+
+If you just want to perform a *GET* request, use `client.get(url, callback)`:
+
+        client.get('http://example.com/me', function(err, result) {
+
+        });
+
 ### Middlewares
 
 Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect).

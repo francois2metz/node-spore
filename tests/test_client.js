@@ -772,3 +772,39 @@ minitest.context("Create client from url", function () {
     });
 
 });
+
+minitest.context("client with utility methods", function ()  {
+    this.setup(function() {
+        this.mock = httpmock.init();
+    });
+
+    function createClient(middleware, mock) {
+        var client = spore.createClient(middleware, __dirname +'/fixtures/authentication.json');
+        client.httpClient = mock;
+        return client;
+    }
+
+    this.assertion("should have a get method", function (test) {
+        var called = 0;
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'GET',
+            path: '/1/statuses/public_timeline.html?test=p',
+        });
+        var middleware = function(method, request, next) {
+            called++;
+            assert.ok(method.authentication);
+            assert.ok(method.unattended_params);
+            assert.deepEqual(method.formats, ["json", "html"]);
+            assert.deepEqual(method.expected_status, [200, 500]);
+            next();
+        };
+        var client = createClient(middleware, this.mock);
+        client.get('http://api.twitter.com/1/statuses/public_timeline.html?test=p', function(err, result) {
+            assert.equal(err, null);
+            assert.equal(1, called);
+            test.finished();
+        });
+    });
+});
