@@ -299,9 +299,11 @@ BSD
 
 ## Changelog
 
-* **0.2.0pre**
+* **0.1.2**
 
-  Add client.get(url, callback)
+  Add client.get(url, callback).
+
+  Fix requests and missing 'var'.
 
 * **0.1.1**
 
