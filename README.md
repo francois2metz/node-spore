@@ -299,6 +299,10 @@ BSD
 
 ## Changelog
 
+* **0.1.3**
+
+  Set content-length header when a payload is provided.
+
 * **0.1.2**
 
   Add client.get(url, callback).
