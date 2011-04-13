@@ -157,9 +157,31 @@ minitest.context("Create client with filename", function () {
             host: 'api.twitter.com',
             method: 'POST',
             path: '/1/user/42',
-            payload: 'plop',
+            payload: 'plop \u00be',
+            headers: {
+                'host': 'api.twitter.com',
+                'content-length': 7
+            }
         });
-        this.client.update_user({id: 42}, 'plop', function(err, result) {
+        this.client.update_user({id: 42}, 'plop \u00be', function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
+    this.assertion('method with buffer as payload', function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'POST',
+            path: '/1/user/42',
+            payload: 'plop \u00be',
+            headers: {
+                'host': 'api.twitter.com',
+                'content-length': 7
+            }
+        });
+        this.client.update_user({id: 42}, new Buffer('plop \u00be'), function(err, result) {
             assert.equal(err, null);
             test.finished();
         });
