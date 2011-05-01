@@ -285,7 +285,7 @@ See examples/.
 
 ## Compatibility
 
-0.1.x run on node 0.3.7.
+0.1.x run on node >= 0.4.0.
 
 0.0.3 run on node 0.2.x.
 
@@ -298,6 +298,10 @@ See examples/.
 BSD
 
 ## Changelog
+
+* **0.1.4** (not yet released)
+
+  Fix: GET method can have a payload.
 
 * **0.1.3**
 
