@@ -301,7 +301,7 @@ BSD
 
 * **0.1.4** (not yet released)
 
-  Fix: GET method can have a payload.
+  Fix: GET and HEAD methods can have a payload.
 
 * **0.1.3**
 

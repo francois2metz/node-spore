@@ -208,14 +208,6 @@ minitest.context("Create client with filename", function () {
         });
     });
 
-    this.assertion("err if payload is provided with a HEAD method", function(test) {
-        this.client.version({}, 'plop', function(err, result) {
-            assert.equal(result, null, 'result should be null');
-            assert.equal(err, 'payload is useless');
-            test.finished();
-        });
-    });
-
     this.assertion("err if request error", function(test) {
         this.mock.add({
             port: 80,
