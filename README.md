@@ -299,7 +299,7 @@ BSD
 
 ## Changelog
 
-* **0.1.4** (not yet released)
+* **0.1.4**
 
   Fix: GET and HEAD methods can have a payload.
 
