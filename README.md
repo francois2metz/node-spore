@@ -184,7 +184,7 @@ Adding http headers:
 
 Transform body:
 
-    function(method, request, next {
+    function(method, request, next) {
         next(function(response, next) {
             response.data = JSON.parse(response.data);
             next();
