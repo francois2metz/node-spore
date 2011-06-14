@@ -212,7 +212,7 @@ Interrupt response middlewares by return response:
 
 #### AuthBasic middleware
 
-HTTP Basic auth for all requests. Require [node-base64](https://github.com/pkrumins/node-base64).
+HTTP Basic auth for all requests.
 
     var AuthBasic = require('spore').middlewares.basic(username, password);
 
@@ -310,6 +310,10 @@ See examples/.
 BSD
 
 ## Changelog
+
+* **0.1.5** (not yet released)
+
+  Remove node-base64 dependency for auth basic middleware.
 
 * **0.1.4**
 
