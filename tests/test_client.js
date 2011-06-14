@@ -298,17 +298,20 @@ minitest.context("Create client with object", function() {
     });
 });
 
-minitest.context("client with multiple definition file", function() {
+minitest.context("client with multiple spec", function() {
     this.setup(function() {
         this.client = spore.createClient(__dirname + '/fixtures/test1.json',
-                                         __dirname + '/fixtures/test2.json');
+                                         __dirname + '/fixtures/test2.json',
+                                         {base_url: 'http://example.com'});
     });
 
-    this.assertion("should have public_timeline and create_user methods", function(test) {
+    this.assertion("should have public_timeline and create_user methods and overrided base_url", function(test) {
         assert.ok(this.client.create_user,
-                 "should have a create_user method");
+                  "should have a create_user method");
         assert.ok(this.client.public_timeline,
-                 "should have a public_timeline method");
+                  "should have a public_timeline method");
+        assert.equal(this.client.spec.base_url,
+                     "http://example.com");
         test.finished();
     });
 });
