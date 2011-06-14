@@ -306,6 +306,7 @@ See examples/.
 ## Links
 
 * [Spore specification](https://github.com/SPORE/specifications)
+* [Some Spore description are already available](https://github.com/SPORE/api-description)
 * [node-spore and IndexTank](https://gist.github.com/1023154)
 * [node-spore and node-intervals](https://github.com/francois2metz/node-intervals)
 
