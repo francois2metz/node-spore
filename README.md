@@ -80,6 +80,10 @@ If you just want to perform a *GET* request, use `client.get(url, callback)`:
 
     });
 
+Get the specification as object with `client.spec`:
+
+    console.log(client.spec.base_url);
+
 ### Middlewares
 
 Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect).
