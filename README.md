@@ -292,6 +292,8 @@ See examples/.
 ## Links
 
 * [Spore specification](https://github.com/SPORE/specifications)
+* [node-spore and IndexTank](https://gist.github.com/1023154)
+* [node-spore and node-intervals](https://github.com/francois2metz/node-intervals)
 
 ## License
 
