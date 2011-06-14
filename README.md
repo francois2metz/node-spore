@@ -20,7 +20,8 @@ You can contruct a client with object:
                     "version" : "0.1",
                     "methods" : {
                     ....
-    }});
+                    }
+    });
 
 With a json string:
 
@@ -30,16 +31,21 @@ With a file:
 
     var client = spore.createClient(__dirname +'/twitter.json');
 
-With an url:
+With an url (asynchronous):
 
     spore.createClientWithUrl('http://example.net/spore.json', function(err, client) {
         // do something with client
     });
 
-You can create a client with multiple spec:
+You can create a client with a spec splitted in multiple files:
 
     var client = spore.createClient(__dirname +'/twitter1.json',
                                     __dirname +'/twitter2.json');
+
+To override/modify a spec:
+
+    var client = spore.createClient(__dirname +'/twitter.json',
+                                    {base_url: 'http://identi.ca/'});
 
 ### Usage
 
