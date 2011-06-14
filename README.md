@@ -86,7 +86,7 @@ Get the specification as object with `client.spec`:
 
 ### Middlewares
 
-Middleware in spore-node are inspired from [connect](http://github.com/senchalabs/connect).
+Middleware in spore-node are inspired by [connect](http://github.com/senchalabs/connect).
 
 With middleware you can handle authentication, special body serialization or some special case. Because in real life, most API sucks.
 
