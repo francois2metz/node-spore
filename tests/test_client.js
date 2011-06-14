@@ -664,6 +664,23 @@ minitest.context("middlewares", function() {
         });
     });
 
+    this.assertion("can have middleware per method", function(test) {
+        var mock = httpmock.init();
+        addHttpRequest(mock);
+        var called = 0;
+        var middleware = function(method, request, next) {
+            called++;
+            next();
+        };
+        var client = spore.createClient(__dirname +'/fixtures/test.json');
+        client.httpClient = mock;
+        client.public_timeline(middleware, {format: 'html'}, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(called, 1);
+            test.finished();
+        });
+    });
+
     this.assertion("are called in order for request and in reverse order for response", function(test) {
         var mock = httpmock.init();
         var request  = [];

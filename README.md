@@ -49,7 +49,7 @@ To override/modify a spec:
 
 ### Usage
 
-`client.method_name([params, ][payload, ]callback)`
+`client.method_name([middleware, ][params, ][payload, ]callback)`
 
 * params: hash with key/value (optional)
 * payload: content of the request (optional)
@@ -127,6 +127,10 @@ Or enable enable middleware only if:
 Or disable a middleware:
 
     client.disable(middleware);
+
+You can have a middleware per method:
+
+    client.method_name(middleware, [params, ][payload, ]callback)
 
 #### Method object
 
@@ -314,6 +318,8 @@ BSD
 * **0.1.5** (not yet released)
 
   Remove node-base64 dependency for auth basic middleware.
+
+  Add middleware per method.
 
 * **0.1.4**
 
