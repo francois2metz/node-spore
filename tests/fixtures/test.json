@@ -81,6 +81,10 @@
             "required_params": ["format", "param1"],
             "path" : "/user.:format?foo=:param1",
             "method" : "GET"
+        },
+        "delete_method": {
+            "path" : "/user",
+            "method" : "DELETE"
         }
     }
 }

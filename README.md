@@ -318,9 +318,11 @@ BSD
 
 * **0.1.5** (not yet released)
 
+  Add middleware per method.
+
   Remove node-base64 dependency for auth basic middleware.
 
-  Add middleware per method.
+  Always set content-length header for methods POST, PUT, DELETE.
 
 * **0.1.4**
 

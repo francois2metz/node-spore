@@ -208,6 +208,24 @@ minitest.context("Create client with filename", function () {
         });
     });
 
+    this.assertion("method delete", function(test) {
+        this.mock.add({
+            port: 80,
+            host: 'api.twitter.com',
+            method: 'DELETE',
+            path: '/1/user',
+            payload: '',
+            headers: {
+                "host":"api.twitter.com",
+                'content-length': 0
+            }
+        });
+        this.client.delete_method(function(err, result) {
+            assert.equal(err, null);
+            test.finished();
+        });
+    });
+
     this.assertion("err if request error", function(test) {
         this.mock.add({
             port: 80,
