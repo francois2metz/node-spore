@@ -316,7 +316,7 @@ BSD
 
 ## Changelog
 
-* **0.1.5** (not yet released)
+* **0.1.5**
 
   Add middleware per method.
 

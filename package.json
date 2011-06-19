@@ -1,6 +1,6 @@
 { "name": "spore"
 , "description": "Generic ReST client and server. Implementation of spore in node."
-, "version": "0.1.4"
+, "version": "0.1.5"
 , "main" : "./lib/spore"
 , "engines": {
   "node": ">= 0.4.0"
