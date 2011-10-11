@@ -316,6 +316,10 @@ BSD
 
 ## Changelog
 
+* **0.1.6**
+
+  Updated tests to be node 0.6 compatible.
+
 * **0.1.5**
 
   Add middleware per method.
