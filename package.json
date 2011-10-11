@@ -5,6 +5,9 @@
 , "engines": {
   "node": ">= 0.4.0"
 }
+, "devDependencies": {
+  "connect": ""
+}
 , "repository": { "type": "git"
                  , "url": "https://github.com/francois2metz/node-spore.git"
                 }
