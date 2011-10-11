@@ -1,11 +1,8 @@
 "use strict";
-// :(
-require.paths.unshift(__dirname +"/minitest");
-require.paths.unshift(__dirname +"/../lib");
 
-var spore = require('spore');
+var spore = require('../lib/spore');
 
-var minitest = require("minitest")
+var minitest = require("./minitest")
 ,   assert   = require("assert")
 ,   connect  = require("connect")
 ,   http     = require("http")

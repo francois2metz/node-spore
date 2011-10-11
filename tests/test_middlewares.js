@@ -1,9 +1,6 @@
 "use strict";
-// :(
-require.paths.unshift(__dirname +"/minitest");
-require.paths.unshift(__dirname +"/../lib");
 
-var middlewares = require('middlewares');
+var middlewares = require('../lib/middlewares');
 
 var JsonMiddleware    = middlewares.json;
 var StatusMiddleware  = middlewares.status;
@@ -12,7 +9,7 @@ var BasicMiddleware   = middlewares.basic;
 var OAuth1Middleware  = middlewares.oauth1;
 var OAuth2Middleware  = middlewares.oauth2;
 
-var minitest = require("minitest")
+var minitest = require("./minitest")
 ,   assert   = require("assert")
 ;
 
