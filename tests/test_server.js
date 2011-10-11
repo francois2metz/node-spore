@@ -6,7 +6,7 @@ var minitest = require("./minitest")
 ,   assert   = require("assert")
 ,   connect  = require("connect")
 ,   http     = require("http")
-,   sys      = require("sys")
+,   util     = require("util")
 ;
 
 var port = 5555;
@@ -124,8 +124,8 @@ function assertResponse (server, req, res, msg){
                     assert.ok(
                         eql,
                         msg + 'Invalid response body.\n'
-                            + ' Expected: ' + sys.inspect(res.body) + '\n'
-                            + ' Got: ' + sys.inspect(response.body)
+                            + ' Expected: ' + util.inspect(res.body) + '\n'
+                            + ' Got: ' + util.inspect(response.body)
                     );
                 }
 
