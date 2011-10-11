@@ -1,5 +1,4 @@
-require.paths.unshift(__dirname +"/../lib");
-var spore = require('spore');
+var spore = require('../lib/spore');
 var express  = require("express");
 
 var app = express.createServer();

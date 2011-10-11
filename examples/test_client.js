@@ -1,6 +1,5 @@
-require.paths.unshift(__dirname +"/../lib");
-var spore = require('spore'),
-    json  = require('middlewares').json();
+var spore = require('../lib/spore'),
+    json  = spore.middlewares.json();
 
 var twitterClient = spore.createClient(json, {
             "base_url" : "http://api.twitter.com/1",
